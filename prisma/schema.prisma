@@ -1,0 +1,410 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== USER & AUTH ====================
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  password      String?   // Optionnel pour OAuth
+  image         String?
+  phone         String?
+  role          UserRole  @default(CLIENT)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  accounts    Account[]
+  sessions    Session[]
+  cart        Cart?
+  orders      Order[]
+  reviews     Review[]
+  customOrders CustomOrder[]
+
+  @@index([email])
+  @@index([role])
+}
+
+enum UserRole {
+  ADMIN
+  CLIENT
+  GUEST
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  @db.Text
+  access_token       String?  @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  @db.Text
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ==================== PRODUCTS ====================
+
+model Product {
+  id                String    @id @default(cuid())
+  name              String
+  slug              String    @unique
+  description       String    @db.Text
+  longDescription   String?   @db.Text
+  image             String?
+  images            Json      @default("[]")
+  
+  // Prix de base
+  basePrice         Float
+  discountPercentage Int      @default(0)
+  
+  // Délais de livraison/confection
+  deliveryDaysMin   Int       @default(7)     // Nombre minimum de jours
+  deliveryDaysMax   Int       @default(10)    // Nombre maximum de jours
+  
+  // Variantes
+  variants          ProductVariant[]
+  
+  // Stock
+  stock             Int       @default(0)
+  isOutOfStock      Boolean   @default(false)
+  
+  // Categories
+  category          String
+  tags              Json      @default("[]")
+  
+  // Customization
+  isCustomizable    Boolean   @default(false)
+  customOptions     CustomOption[]
+  
+  // Options de commande
+  allowExact        Boolean   @default(true)   // Couleur/taille prédéfinis
+  allowCustom       Boolean   @default(true)   // Personnalisation (couleur, taille, etc)
+  allowBespoke      Boolean   @default(false)  // Sur mesure
+  
+  // Meta
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  // Relations
+  cartItems         CartItem[]
+  orderItems        OrderItem[]
+  reviews           Review[]
+
+  @@index([slug])
+  @@index([category])
+  @@index([isOutOfStock])
+}
+
+// Variantes de délai (Normal: 7-10 jours, Express: 3-5 jours, etc)
+model ProductVariant {
+  id          String    @id @default(cuid())
+  productId   String
+  name        String    // "Normal", "Express", "Premium"
+  daysMin     Int       // 3
+  daysMax     Int       // 5
+  priceMultiplier Float  @default(1.0) // 1.0 pour Normal, 1.5 pour Express
+  description String?
+  createdAt   DateTime  @default(now())
+  
+  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+}
+
+model CustomOption {
+  id          String    @id @default(cuid())
+  productId   String
+  name        String    // "Couleur", "Taille", "Matière"
+  type        String    // "color", "size", "material", "text"
+  values      Json      @default("[]")
+  isRequired  Boolean   @default(true)
+  
+  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+}
+
+// ==================== CART ====================
+
+model Cart {
+  id        String    @id @default(cuid())
+  userId    String    @unique
+  items     CartItem[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model CartItem {
+  id          String    @id @default(cuid())
+  cartId      String
+  productId   String
+  quantity    Int
+  customizations CustomizationOption[]
+  
+  cart        Cart      @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([cartId])
+  @@index([productId])
+}
+
+model CustomizationOption {
+  id          String    @id @default(cuid())
+  cartItemId  String
+  optionName  String    // "Couleur", "Taille"
+  optionValue String    // "Rouge", "M"
+  
+  cartItem    CartItem  @relation(fields: [cartItemId], references: [id], onDelete: Cascade)
+
+  @@index([cartItemId])
+}
+
+// ==================== ORDERS ====================
+
+enum OrderType {
+  EXACT        // Produit exact comme sur la photo
+  CUSTOM       // Personnalisation (couleur, taille, etc)
+  BESPOKE      // Sur mesure / Commission
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  orderNumber     String      @unique
+  userId          String
+  email           String
+  phone           String
+  
+  // Client info
+  firstName       String
+  lastName        String
+  
+  // Shipping
+  address         String
+  city            String
+  postalCode      String
+  country         String
+  
+  // Order details
+  items           OrderItem[]
+  totalPrice      Float
+  orderType       OrderType   @default(EXACT)
+  variantId       String?     // Référence au variant (Normal/Express)
+  estimatedDays   Int?        // Nombre de jours estimé
+  
+  status          OrderStatus @default(PENDING)
+  paymentStatus   PaymentStatus @default(PENDING)
+  
+  // Communication
+  whatsappSent    Boolean     @default(false)
+  emailSent       Boolean     @default(false)
+  whatsappMessageId String?
+  notes           String?     @db.Text
+  
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([orderNumber])
+  @@index([orderType])
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+model OrderItem {
+  id          String    @id @default(cuid())
+  orderId     String
+  productId   String
+  quantity    Int
+  price       Float      // Prix au moment de la commande
+  customizations OrderCustomization[]
+  
+  order       Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model OrderCustomization {
+  id          String    @id @default(cuid())
+  orderItemId String
+  optionName  String
+  optionValue String
+  
+  orderItem   OrderItem @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+
+  @@index([orderItemId])
+}
+
+// ==================== CUSTOM ORDERS ====================
+
+model CustomOrder {
+  id            String      @id @default(cuid())
+  userId        String
+  email         String
+  description   String      @db.Text
+  requirements  String      @db.Text
+  images        Json        @default("[]")
+  budget        Float?
+  deadline      DateTime?
+  status        CustomOrderStatus @default(PENDING)
+  adminNotes    String?     @db.Text
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+}
+
+enum CustomOrderStatus {
+  PENDING
+  ACCEPTED
+  IN_PROGRESS
+  COMPLETED
+  REJECTED
+}
+
+// ==================== REVIEWS & RATINGS ====================
+
+model Review {
+  id        String    @id @default(cuid())
+  productId String?   // Optionnel pour les avis généraux
+  userId    String
+  rating    Int       // 1-5
+  comment   String    @db.Text
+  isVerified Boolean  @default(false)
+  helpful   Int       @default(0)
+  image     String?   @db.LongText  // URL ou base64 de l'image (optionnel)
+  video     String?   @db.LongText  // URL ou base64 de la vidéo (optionnel)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  product   Product?  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([userId])
+  @@index([rating])
+}
+
+// ==================== PAGES STATIQUES ====================
+
+model About {
+  id          String    @id @default(cuid())
+  title       String
+  subtitle    String?
+  content     String    @db.Text
+  image       String?
+  extendedData Json?    // {heroTitle, heroSubtitle, storyContent, founders[], values[], teamContent, backgroundVideo, backgroundImage, foundersImage}
+  updatedAt   DateTime  @updatedAt
+}
+
+model Page {
+  id        String    @id @default(cuid())
+  slug      String    @unique
+  title     String
+  content   String    @db.Text
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([slug])
+}
+
+// ==================== PROMO & COUPONS ====================
+
+model Promotion {
+  id              String    @id @default(cuid())
+  code            String    @unique
+  discountPercentage Int
+  description     String?
+  startDate       DateTime
+  endDate         DateTime
+  maxUses         Int?
+  usedCount       Int       @default(0)
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([code])
+  @@index([isActive])
+}
+
+// ==================== CONTACT & SUPPORT ====================
+
+model ContactMessage {
+  id        String    @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String
+  message   String    @db.Text
+  isRead    Boolean   @default(false)
+  response  String?   @db.Text
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([isRead])
+  @@index([createdAt])
+}
