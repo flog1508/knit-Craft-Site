@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { sendBespokeAdminEmail, sendBespokeClientEmail } from '@/lib/email'
 
 interface BespokeRequest {
   userId?: string
@@ -52,19 +53,40 @@ export async function POST(req: NextRequest) {
       },
     })
 
-    // Notifier l'admin
-    const message =
-      `Nouvelle demande personnalisée\n\n` +
-      `Email: ${body.email}\n` +
-      `Description: ${body.description}\n` +
-      `Budget: ${body.budget ? body.budget + '€' : 'Non spécifié'}\n` +
-      `Délai: ${body.deadline || 'Non spécifié'}`
-    
-    console.log('Admin notification:', message)
+    // Emails (client + admin)
+    const clientOk = await sendBespokeClientEmail({
+      to: body.email,
+      description: body.description,
+      requirements: body.requirements,
+      budget: body.budget,
+      deadline: body.deadline,
+    })
+
+    // Admin notification non-bloquante
+    sendBespokeAdminEmail({
+      email: body.email,
+      description: body.description,
+      requirements: body.requirements,
+      budget: body.budget,
+      deadline: body.deadline,
+    }).catch((e) => console.error('Erreur notification admin sur-mesure:', e))
+
+    if (!clientOk) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "La demande est enregistrée, mais l'email de confirmation n'a pas pu être envoyé.",
+          id: customOrder.id,
+        },
+        { status: 502 }
+      )
+    }
 
     return NextResponse.json({
       success: true,
       message: 'Demande reçue ! Nous vous contacterons bientôt.',
+      id: customOrder.id,
     })
   } catch (error) {
     console.error('Erreur:', error)

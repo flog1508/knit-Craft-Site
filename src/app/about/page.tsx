@@ -1,25 +1,122 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button, Card } from '@/components/ui'
 import { ArrowRight } from 'lucide-react'
 
+interface ExtendedData {
+  heroTitle?: string
+  heroSubtitle?: string
+  storyContent?: string
+  founders?: { name?: string; role?: string; description?: string }[]
+  values?: { title?: string; description?: string }[]
+  teamContent?: string
+  backgroundVideo?: string
+  backgroundImage?: string
+  foundersImage?: string
+}
+
 export default function AboutPage() {
+  const [ext, setExt] = useState<ExtendedData | null>(null)
+
+  useEffect(() => {
+    fetch('/api/about')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data?.extendedData) setExt(data.extendedData)
+      })
+      .catch(() => {})
+  }, [])
+
+  const heroTitle =
+    ext?.heroTitle || 'À propos de Knit & Craft'
+  const heroSubtitle =
+    ext?.heroSubtitle ||
+    "Knit & Craft est né d'une passion pour le tricot et le crochet faits main. Chaque pièce est imaginée, créée et finalisée à la main."
+
+  const backgroundVideo =
+    ext?.backgroundVideo || '/images/background_apropos.mp4'
+  const backgroundImage = ext?.backgroundImage
+
+  const values =
+    (ext?.values && ext.values.length >= 3
+      ? ext.values
+      : [
+          {
+            title: 'Créations uniques',
+            description:
+              "Chaque modèle est réalisé en petite série ou en pièce unique, pour que votre tricot soit vraiment à vous.",
+          },
+          {
+            title: 'Qualité & confort',
+            description:
+              'Nous sélectionnons des fils de qualité, agréables à porter et pensés pour durer au fil des saisons.',
+          },
+          {
+            title: 'Sur-mesure humain',
+            description:
+              'Nous échangeons avec vous pour adapter les couleurs, les tailles et les matières à votre style et vos envies.',
+          },
+        ]) as { title?: string; description?: string }[]
+
+  const story =
+    ext?.storyContent ||
+    "Derrière Knit & Craft, il y a une envie simple : proposer des pièces chaudes, douces et raffinées, loin de la production industrielle.\n\nChaque commande est préparée à la main, du premier point au dernier fil rentré. Vous recevez une création pensée pour vous accompagner longtemps."
+
+  const foundersImage =
+    ext?.foundersImage ||
+    '/images/WhatsApp Image 2026-02-03 at 15.57.52.jpeg'
+
+  const founders =
+    (ext?.founders && ext.founders.length > 0
+      ? ext.founders
+      : [
+          {
+            name: 'Fondatrice 1',
+            role: 'Co-fondatrice & designer',
+            description:
+              "Amoureuse des techniques traditionnelles et de l'innovation.",
+          },
+          {
+            name: 'Fondatrice 2',
+            role: 'Matières & qualité',
+            description:
+              'Experte en matières premières et en qualité artisanale.',
+          },
+          {
+            name: 'Fondatrice 3',
+            role: 'Vision & durabilité',
+            description:
+              "Vision créative tournée vers la durabilité et l'authenticité.",
+          },
+        ]) as { name?: string; role?: string; description?: string }[]
+
+  const teamContent =
+    ext?.teamContent ||
+    "Knit & Craft est porté par une petite équipe de créatrices passionnées. Ensemble, nous imaginons des pièces qui racontent une histoire et qui sont pensées pour vous accompagner longtemps."
+
   return (
     <div className="bg-primary-950">
       {/* Même ambiance que la home, mais avec une vidéo dédiée */}
       <section className="relative overflow-hidden bg-primary-900">
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover opacity-100 mix-blend-multiply"
-        >
-          <source src="/images/background_apropos.mp4" type="video/mp4" />
-        </video>
+        {backgroundImage ? (
+          <div
+            className="absolute inset-0 w-full h-full bg-cover bg-center opacity-100 mix-blend-multiply"
+            style={{ backgroundImage: `url(${backgroundImage})` }}
+          />
+        ) : (
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover opacity-100 mix-blend-multiply"
+          >
+            <source src={backgroundVideo} type="video/mp4" />
+          </video>
+        )}
 
         <div className="relative max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-10 sm:py-16 md:py-20 lg:py-24 space-y-12 sm:space-y-16">
           {/* Hero À propos */}
@@ -28,12 +125,13 @@ export default function AboutPage() {
               L&apos;histoire derrière Knit & Craft
             </p>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-primary-50 mb-4 sm:mb-6 leading-tight">
-              À propos de <span className="text-accent-300">Knit & Craft</span>
+              {heroTitle.split('Knit & Craft')[0]}
+              <span className="text-accent-300">
+                {heroTitle.includes('Knit & Craft') ? 'Knit & Craft' : ''}
+              </span>
             </h1>
             <p className="text-sm sm:text-base md:text-lg text-accent-100 leading-relaxed max-w-2xl">
-              Knit &amp; Craft est né d&apos;une passion pour le tricot et le crochet faits main. Chaque pièce
-              est imaginée, créée et finalisée à la main, avec des matières choisies pour leur douceur, leur tenue
-              et leur durabilité.
+              {heroSubtitle}
             </p>
           </div>
 
@@ -49,34 +147,19 @@ export default function AboutPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-8">
-              <Card className="bg-primary-900/70 border border-primary-800 rounded-2xl p-6 lg:p-7 shadow-lg shadow-primary-900/40 text-primary-50">
-                <h3 className="text-lg sm:text-xl md:text-2xl font-semibold mb-3 text-accent-200">
-                  Créations uniques
-                </h3>
-                <p className="text-sm md:text-base text-accent-100">
-                  Chaque modèle est réalisé en petite série ou en pièce unique, pour que votre tricot soit vraiment
-                  à vous.
-                </p>
-              </Card>
-
-              <Card className="bg-primary-900/70 border border-primary-800 rounded-2xl p-6 lg:p-7 shadow-lg shadow-primary-900/40 text-primary-50">
-                <h3 className="text-lg sm:text-xl md:text-2xl font-semibold mb-3 text-accent-200">
-                  Qualité &amp; confort
-                </h3>
-                <p className="text-sm md:text-base text-accent-100">
-                  Nous sélectionnons des fils de qualité, agréables à porter et pensés pour durer au fil des saisons.
-                </p>
-              </Card>
-
-              <Card className="bg-primary-900/70 border border-primary-800 rounded-2xl p-6 lg:p-7 shadow-lg shadow-primary-900/40 text-primary-50">
-                <h3 className="text-lg sm:text-xl md:text-2xl font-semibold mb-3 text-accent-200">
-                  Sur-mesure humain
-                </h3>
-                <p className="text-sm md:text-base text-accent-100">
-                  Nous échangeons avec vous pour adapter les couleurs, les tailles et les matières à votre style et
-                  vos envies.
-                </p>
-              </Card>
+              {values.slice(0, 3).map((val, idx) => (
+                <Card
+                  key={idx}
+                  className="bg-primary-900/70 border border-primary-800 rounded-2xl p-6 lg:p-7 shadow-lg shadow-primary-900/40 text-primary-50"
+                >
+                  <h3 className="text-lg sm:text-xl md:text-2xl font-semibold mb-3 text-accent-200">
+                    {val.title}
+                  </h3>
+                  <p className="text-sm md:text-base text-accent-100">
+                    {val.description}
+                  </p>
+                </Card>
+              ))}
             </div>
           </div>
 
@@ -84,13 +167,8 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <Card className="bg-primary-900/70 border border-primary-800 rounded-2xl p-6 md:p-8 shadow-lg shadow-primary-900/40 text-primary-50">
               <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4">Notre histoire</h2>
-              <p className="text-sm sm:text-base text-accent-100 leading-relaxed mb-3">
-                Derrière Knit &amp; Craft, il y a une envie simple&nbsp;: proposer des pièces chaudes, douces et
-                raffinées, loin de la production industrielle.
-              </p>
-              <p className="text-sm sm:text-base text-accent-100 leading-relaxed">
-                Chaque commande est préparée à la main, du premier point au dernier fil rentré. Vous recevez une
-                création pensée pour vous accompagner longtemps.
+              <p className="text-sm sm:text-base text-accent-100 leading-relaxed whitespace-pre-line">
+                {story}
               </p>
             </Card>
 
@@ -123,7 +201,7 @@ export default function AboutPage() {
               <div className="absolute -inset-4 rounded-3xl bg-accent-500/20 blur-3xl" />
               <div className="relative rounded-3xl overflow-hidden border border-accent-500/40 bg-primary-900/40 shadow-2xl">
                 <Image
-                  src="/images/WhatsApp Image 2026-02-03 at 15.57.52.jpeg"
+                  src={foundersImage}
                   alt="Les fondatrices de Knit & Craft"
                   width={700}
                   height={500}
@@ -138,22 +216,18 @@ export default function AboutPage() {
                 Knit &amp; Craft est porté par une petite équipe de créatrices passionnées&nbsp;:
               </p>
               <ul className="space-y-2 text-sm sm:text-base text-accent-100">
-                <li>
-                  <span className="font-semibold text-accent-200">Fondatrice 1</span> – co-fondatrice &amp; designer,
-                  amoureuse des techniques traditionnelles et de l&apos;innovation.
-                </li>
-                <li>
-                  <span className="font-semibold text-accent-200">Fondatrice 2</span> – experte en matières premières
-                  et en qualité artisanale.
-                </li>
-                <li>
-                  <span className="font-semibold text-accent-200">Fondatrice 3</span> – vision créative tournée vers la
-                  durabilité et l&apos;authenticité.
-                </li>
+                {founders.map((f, idx) => (
+                  <li key={idx}>
+                    <span className="font-semibold text-accent-200">
+                      {f.name}
+                    </span>{' '}
+                    {f.role && <>– {f.role}, </>}
+                    {f.description}
+                  </li>
+                ))}
               </ul>
               <p className="text-sm sm:text-base text-accent-100 leading-relaxed mt-4">
-                Ensemble, elles imaginent des pièces qui racontent une histoire, et qui sont pensées pour vous
-                accompagner longtemps.
+                {teamContent}
               </p>
             </Card>
           </div>

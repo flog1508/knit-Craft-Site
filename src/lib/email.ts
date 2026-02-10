@@ -16,12 +16,15 @@ function createTransporter() {
     })
   }
 
-  // Fallback Gmail (par défaut dans ton projet)
+  // Fallback Gmail (EMAIL_* ou GMAIL_*)
+  const gmailUser = process.env.EMAIL_USER || process.env.GMAIL_USER
+  const gmailPass = process.env.EMAIL_PASSWORD || process.env.GMAIL_PASSWORD
+
   return nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: process.env.GMAIL_USER,
-      pass: process.env.GMAIL_PASSWORD,
+      user: gmailUser,
+      pass: gmailPass,
     },
   })
 }
@@ -40,9 +43,14 @@ export async function sendOrderEmail(
     const transporter = createTransporter()
 
     // Vérifier que Gmail ou un SMTP est bien configuré
-    if (!process.env.SMTP_HOST && !process.env.GMAIL_USER) {
-      console.error('Email: aucun SMTP ni GMAIL_USER configuré (.env)')
-      return { ok: false, error: 'Configuration email manquante (SMTP ou GMAIL_USER)' }
+    const hasSmtp = !!process.env.SMTP_HOST
+    const hasGmail =
+      !!process.env.EMAIL_USER ||
+      !!process.env.GMAIL_USER
+
+    if (!hasSmtp && !hasGmail) {
+      console.error('Email: aucun SMTP ni compte Gmail configuré (.env)')
+      return { ok: false, error: 'Configuration email manquante (SMTP_* ou EMAIL_USER/GMAIL_USER)' }
     }
 
     try {
@@ -181,6 +189,156 @@ export async function sendAdminNotification(
     return true
   } catch (error) {
     console.error('Erreur notification admin:', error)
+    return false
+  }
+}
+
+export async function sendReviewAdminEmail(payload: {
+  name: string
+  email: string
+  message: string
+  productId?: string
+}) {
+  try {
+    const transporter = createTransporter()
+    const hasSmtp = !!process.env.SMTP_HOST
+    const hasGmail =
+      !!process.env.EMAIL_USER ||
+      !!process.env.GMAIL_USER
+
+    if (!hasSmtp && !hasGmail) {
+      console.error('Email avis: aucun SMTP ni compte Gmail configuré (.env)')
+      return false
+    }
+
+    const adminEmail =
+      process.env.ADMIN_EMAIL ||
+      process.env.NEXT_PUBLIC_ADMIN_EMAIL ||
+      (process.env.EMAIL_USER || process.env.GMAIL_USER || '')
+
+    if (!adminEmail) {
+      console.error('Email avis: aucune adresse admin configurée')
+      return false
+    }
+
+    const html = `
+      <h2>Nouvel avis client</h2>
+      <p><strong>Nom:</strong> ${payload.name}</p>
+      <p><strong>Email:</strong> ${payload.email || 'Non fourni'}</p>
+      ${payload.productId ? `<p><strong>Produit ID:</strong> ${payload.productId}</p>` : ''}
+      <h3>Message</h3>
+      <p>${payload.message}</p>
+    `
+
+    await transporter.sendMail({
+      from:
+        process.env.EMAIL_FROM ||
+        `Knit & Craft <${process.env.GMAIL_USER || process.env.SMTP_USER || ''}>`,
+      to: adminEmail,
+      subject: '🧶 Nouvel avis client sur Knit & Craft',
+      html,
+    })
+
+    console.log('Notification admin avis envoyée')
+    return true
+  } catch (error) {
+    console.error('Erreur notification admin avis:', error)
+    return false
+  }
+}
+
+export async function sendBespokeClientEmail(payload: {
+  to: string
+  description: string
+  requirements: string
+  budget?: number
+  deadline?: string
+}) {
+  try {
+    const transporter = createTransporter()
+    const hasSmtp = !!process.env.SMTP_HOST
+    const hasGmail = !!process.env.EMAIL_USER || !!process.env.GMAIL_USER
+    if (!hasSmtp && !hasGmail) return false
+
+    try {
+      await transporter.verify()
+    } catch (e) {
+      console.error('Email bespoke client verify:', e)
+      return false
+    }
+
+    const html = `
+      <div style="font-family: Arial, sans-serif; max-width: 640px; margin: 0 auto;">
+        <h2>Bonjour,</h2>
+        <p>Nous avons bien reçu votre demande sur mesure. Voici un récapitulatif :</p>
+        <div style="background:#f5f5f5;padding:14px;border-radius:8px;">
+          <p><strong>Description :</strong><br/>${payload.description}</p>
+          <p><strong>Exigences :</strong><br/>${payload.requirements}</p>
+          <p><strong>Budget :</strong> ${payload.budget ? payload.budget + '€' : 'Non spécifié'}</p>
+          <p><strong>Délai :</strong> ${payload.deadline || 'Non spécifié'}</p>
+        </div>
+        <p style="margin-top:18px;">Nous vous recontacterons dès que possible.</p>
+        <p><strong>Knit & Craft</strong></p>
+      </div>
+    `
+
+    await transporter.sendMail({
+      from:
+        process.env.EMAIL_FROM ||
+        `Knit & Craft <${process.env.GMAIL_USER || process.env.SMTP_USER || ''}>`,
+      to: payload.to,
+      subject: 'Confirmation de votre demande sur mesure',
+      html,
+    })
+    console.log(`Email demande sur mesure envoyé à ${payload.to}`)
+    return true
+  } catch (e) {
+    console.error('Erreur email bespoke client:', e)
+    return false
+  }
+}
+
+export async function sendBespokeAdminEmail(payload: {
+  email: string
+  description: string
+  requirements: string
+  budget?: number
+  deadline?: string
+}) {
+  try {
+    const transporter = createTransporter()
+    const hasSmtp = !!process.env.SMTP_HOST
+    const hasGmail = !!process.env.EMAIL_USER || !!process.env.GMAIL_USER
+    if (!hasSmtp && !hasGmail) return false
+
+    const adminEmail =
+      process.env.ADMIN_EMAIL ||
+      process.env.NEXT_PUBLIC_ADMIN_EMAIL ||
+      (process.env.EMAIL_USER || process.env.GMAIL_USER || '')
+
+    if (!adminEmail) return false
+
+    const html = `
+      <h2>Nouvelle demande sur mesure</h2>
+      <p><strong>Email client:</strong> ${payload.email}</p>
+      <p><strong>Description:</strong><br/>${payload.description}</p>
+      <p><strong>Exigences:</strong><br/>${payload.requirements}</p>
+      <p><strong>Budget:</strong> ${payload.budget ? payload.budget + '€' : 'Non spécifié'}</p>
+      <p><strong>Délai:</strong> ${payload.deadline || 'Non spécifié'}</p>
+    `
+
+    await transporter.sendMail({
+      from:
+        process.env.EMAIL_FROM ||
+        `Knit & Craft <${process.env.GMAIL_USER || process.env.SMTP_USER || ''}>`,
+      to: adminEmail,
+      subject: '✨ Nouvelle demande sur mesure',
+      html,
+    })
+    console.log('Notification admin demande sur mesure envoyée')
+    return true
+  } catch (e) {
+    console.error('Erreur email bespoke admin:', e)
     return false
   }
 }
