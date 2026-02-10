@@ -1,162 +1,162 @@
 'use client'
-/* eslint-disable @next/next/no-img-element */
 
-import React, { useEffect, useState } from 'react'
-import { Card } from '@/components/ui'
-
-interface Founder {
-  name: string
-  role: string
-  description: string
-  image?: string
-}
-
-interface Value {
-  title: string
-  description: string
-}
-
-interface ExtendedData {
-  heroTitle?: string
-  heroSubtitle?: string
-  storyContent?: string
-  founders?: Founder[]
-  values?: Value[]
-  teamContent?: string
-  backgroundVideo?: string
-  backgroundImage?: string
-  foundersImage?: string
-}
-
-const defaultFounders: Founder[] = [
-  { name: 'Fondatrice 1', role: 'Co-fondatrice & Designer', description: "Passionnée par les techniques traditionnelles et l'innovation." },
-  { name: 'Fondatrice 2', role: 'Co-fondatrice & Créatrice', description: 'Experte en matières premières et qualité artisanale.' },
-  { name: 'Fondatrice 3', role: 'Co-fondatrice & Vision', description: "Visionnaire pour la durabilité et l'authenticité." },
-]
-
-const defaultValues: Value[] = [
-  { title: 'Qualité', description: 'Nous utilisons uniquement des matières premières sélectionnées pour leur qualité.' },
-  { title: 'Authenticité', description: 'Chaque pièce est créée à la main avec passion et attention aux détails.' },
-  { title: 'Durabilité', description: 'Nous croyons en la création de pièces intemporelles et durables.' },
-]
+import React from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
+import { Button, Card } from '@/components/ui'
+import { ArrowRight } from 'lucide-react'
 
 export default function AboutPage() {
-  const [about, setAbout] = useState<ExtendedData | null>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    fetch('/api/about')
-      .then(r => r.json())
-      .then(data => {
-        if (data?.extendedData) setAbout(data.extendedData)
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false))
-  }, [])
-
-  const ext = about || {}
-  const heroTitle = ext.heroTitle || 'À Propos de Knit & Craft'
-  const heroSubtitle = ext.heroSubtitle || "Découvrez l'histoire derrière nos créations artisanales"
-  const storyContent = ext.storyContent || "Knit & Craft est née d'une passion pour l'art du tricot et du crochet. Depuis plus de 10 ans, nous créons des pièces uniques en utilisant des techniques traditionnelles et des matières premières de qualité.\n\nChaque création est le fruit d'un travail minutieux, alliant créativité, compétence et amour du détail. Nous croyons que le fait main a une valeur inestimable."
-  const founders = (ext.founders && ext.founders.length > 0) ? ext.founders : defaultFounders
-  const values = (ext.values && ext.values.length > 0) ? ext.values : defaultValues
-  const teamContent = ext.teamContent || "Notre équipe est composée d'artisans passionnés et expérimentés. Nous travaillons ensemble pour créer des pièces qui vous toucheront et dureront dans le temps."
-  const backgroundVideo = ext.backgroundVideo || '/images/WhatsApp Video 2026-02-03 at 14.39.33.mp4'
-  const backgroundImage = ext.backgroundImage
-  const foundersImage = ext.foundersImage || '/images/WhatsApp Image 2026-02-03 at 15.57.52.jpeg'
-
   return (
-    <div className="relative min-h-screen bg-primary-950">
-      {/* Video/Image Background */}
-      {backgroundVideo && !backgroundImage && (
+    <div className="bg-primary-950">
+      {/* Même ambiance que la home, mais avec une vidéo dédiée */}
+      <section className="relative overflow-hidden bg-primary-900">
         <video
           autoPlay
           muted
           loop
           playsInline
-          className="absolute top-0 left-0 w-full h-full object-cover -z-10 opacity-100 mix-blend-multiply"
+          className="absolute inset-0 w-full h-full object-cover opacity-100 mix-blend-multiply"
         >
-          <source src={backgroundVideo} type="video/mp4" />
+          <source src="/images/background_apropos.mp4" type="video/mp4" />
         </video>
-      )}
-      {backgroundImage && (
-        <div
-          className="absolute top-0 left-0 w-full h-full -z-10 bg-cover bg-center opacity-100 mix-blend-multiply"
-          style={{ backgroundImage: `url(${backgroundImage})` }}
-        />
-      )}
-      {!backgroundVideo && !backgroundImage && (
-        <div className="absolute top-0 left-0 w-full h-full -z-10 bg-primary-900" />
-      )}
-      <div className="absolute inset-0 bg-primary-900/80 -z-0" />
 
-      {/* Hero Section */}
-      <section className="relative py-12 sm:py-16 md:py-24 lg:py-32">
-        <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 text-center">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-primary-50 mb-3 sm:mb-4 md:mb-6 drop-shadow-lg">
-            {heroTitle}
-          </h1>
-          <p className="text-sm sm:text-base md:text-lg lg:text-xl text-accent-100 drop-shadow-md">
-            {heroSubtitle}
-          </p>
-        </div>
-      </section>
-
-      {/* Story Section */}
-      <section className="relative py-8 sm:py-12 md:py-16 lg:py-24">
-        <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-          <Card className="mb-8 sm:mb-10 md:mb-12 p-4 sm:p-6 md:p-8 bg-primary-900/70 backdrop-blur-md border border-primary-800 shadow-lg text-primary-50">
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4">
-              Notre Histoire
-            </h2>
-            <div className="text-accent-100 leading-relaxed whitespace-pre-line">{storyContent}</div>
-          </Card>
-
-          {/* Values */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-10 md:mb-12">
-            {values.map((value, index) => (
-              <Card
-                key={index}
-                className="p-4 sm:p-6 bg-primary-900/70 backdrop-blur-md border border-primary-800 shadow-lg text-primary-50"
-              >
-                <h3 className="text-lg sm:text-xl font-bold mb-2 text-accent-200">{value.title}</h3>
-                <p className="text-xs sm:text-sm md:text-base text-accent-100">{value.description}</p>
-              </Card>
-            ))}
+        <div className="relative max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-10 sm:py-16 md:py-20 lg:py-24 space-y-12 sm:space-y-16">
+          {/* Hero À propos */}
+          <div className="max-w-3xl">
+            <p className="uppercase tracking-[0.25em] text-accent-200 text-xs sm:text-sm mb-3">
+              L&apos;histoire derrière Knit & Craft
+            </p>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-primary-50 mb-4 sm:mb-6 leading-tight">
+              À propos de <span className="text-accent-300">Knit & Craft</span>
+            </h1>
+            <p className="text-sm sm:text-base md:text-lg text-accent-100 leading-relaxed max-w-2xl">
+              Knit &amp; Craft est né d&apos;une passion pour le tricot et le crochet faits main. Chaque pièce
+              est imaginée, créée et finalisée à la main, avec des matières choisies pour leur douceur, leur tenue
+              et leur durabilité.
+            </p>
           </div>
 
-          {/* Founders */}
-          <div>
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-primary-50 mb-6 sm:mb-8 text-center drop-shadow-lg">
-              Nos Fondatrices
-            </h2>
-            <Card className="mb-8 sm:mb-12 bg-primary-900/70 backdrop-blur-md border border-primary-800 shadow-lg overflow-hidden text-primary-50">
-              <img src={foundersImage} alt="Nos Fondatrices" className="w-full h-auto object-cover" />
-              <div className="p-4 sm:p-6 md:p-8">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {founders.map((founder, index) => (
-                    <div key={index} className="text-center">
-                      <h3 className="text-base sm:text-lg md:text-xl font-bold mb-2">
-                        {founder.name}
-                      </h3>
-                      <p className="text-xs sm:text-sm text-accent-100 mb-2">{founder.role}</p>
-                      <p className="text-accent-100 text-xs sm:text-sm">
-                        {(founder as any).description ?? (founder as any).bio ?? ''}
-                      </p>
-                    </div>
-                  ))}
-                </div>
+          {/* 3 piliers comme la section "Pourquoi nous choisir" */}
+          <div className="space-y-8">
+            <div className="text-center">
+              <p className="uppercase tracking-[0.25em] text-accent-300 text-xs sm:text-sm mb-3">
+                Notre philosophie
+              </p>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary-50 mb-6 sm:mb-10">
+                Le détail fait la différence
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-8">
+              <Card className="bg-primary-900/70 border border-primary-800 rounded-2xl p-6 lg:p-7 shadow-lg shadow-primary-900/40 text-primary-50">
+                <h3 className="text-lg sm:text-xl md:text-2xl font-semibold mb-3 text-accent-200">
+                  Créations uniques
+                </h3>
+                <p className="text-sm md:text-base text-accent-100">
+                  Chaque modèle est réalisé en petite série ou en pièce unique, pour que votre tricot soit vraiment
+                  à vous.
+                </p>
+              </Card>
+
+              <Card className="bg-primary-900/70 border border-primary-800 rounded-2xl p-6 lg:p-7 shadow-lg shadow-primary-900/40 text-primary-50">
+                <h3 className="text-lg sm:text-xl md:text-2xl font-semibold mb-3 text-accent-200">
+                  Qualité &amp; confort
+                </h3>
+                <p className="text-sm md:text-base text-accent-100">
+                  Nous sélectionnons des fils de qualité, agréables à porter et pensés pour durer au fil des saisons.
+                </p>
+              </Card>
+
+              <Card className="bg-primary-900/70 border border-primary-800 rounded-2xl p-6 lg:p-7 shadow-lg shadow-primary-900/40 text-primary-50">
+                <h3 className="text-lg sm:text-xl md:text-2xl font-semibold mb-3 text-accent-200">
+                  Sur-mesure humain
+                </h3>
+                <p className="text-sm md:text-base text-accent-100">
+                  Nous échangeons avec vous pour adapter les couleurs, les tailles et les matières à votre style et
+                  vos envies.
+                </p>
+              </Card>
+            </div>
+          </div>
+
+          {/* Bloc "Notre histoire" + CTA vers la boutique */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <Card className="bg-primary-900/70 border border-primary-800 rounded-2xl p-6 md:p-8 shadow-lg shadow-primary-900/40 text-primary-50">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4">Notre histoire</h2>
+              <p className="text-sm sm:text-base text-accent-100 leading-relaxed mb-3">
+                Derrière Knit &amp; Craft, il y a une envie simple&nbsp;: proposer des pièces chaudes, douces et
+                raffinées, loin de la production industrielle.
+              </p>
+              <p className="text-sm sm:text-base text-accent-100 leading-relaxed">
+                Chaque commande est préparée à la main, du premier point au dernier fil rentré. Vous recevez une
+                création pensée pour vous accompagner longtemps.
+              </p>
+            </Card>
+
+            <div className="flex flex-col items-start md:items-center gap-4">
+              <p className="text-sm sm:text-base md:text-lg text-accent-50 max-w-md">
+                Envie de découvrir nos pièces ou de commander un modèle personnalisé&nbsp;?
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Link href="/shop">
+                  <Button size="lg" className="shadow-lg shadow-primary-900/40 sm:px-8">
+                    Découvrir la boutique <ArrowRight className="w-5 h-5" />
+                  </Button>
+                </Link>
+                <Link href="/bespoke">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="border-accent-300 text-accent-100 hover:bg-accent-300/10 sm:px-8"
+                  >
+                    Une pièce sur-mesure <ArrowRight className="w-5 h-5" />
+                  </Button>
+                </Link>
               </div>
+            </div>
+          </div>
+
+          {/* Nos fondatrices */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            <div className="relative w-full max-w-xl mx-auto">
+              <div className="absolute -inset-4 rounded-3xl bg-accent-500/20 blur-3xl" />
+              <div className="relative rounded-3xl overflow-hidden border border-accent-500/40 bg-primary-900/40 shadow-2xl">
+                <Image
+                  src="/images/WhatsApp Image 2026-02-03 at 15.57.52.jpeg"
+                  alt="Les fondatrices de Knit & Craft"
+                  width={700}
+                  height={500}
+                  className="object-cover w-full h-full"
+                />
+              </div>
+            </div>
+
+            <Card className="bg-primary-900/70 border border-primary-800 rounded-2xl p-6 md:p-8 shadow-lg shadow-primary-900/40 text-primary-50">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4">Nos fondatrices</h2>
+              <p className="text-sm sm:text-base text-accent-100 leading-relaxed mb-4">
+                Knit &amp; Craft est porté par une petite équipe de créatrices passionnées&nbsp;:
+              </p>
+              <ul className="space-y-2 text-sm sm:text-base text-accent-100">
+                <li>
+                  <span className="font-semibold text-accent-200">Fondatrice 1</span> – co-fondatrice &amp; designer,
+                  amoureuse des techniques traditionnelles et de l&apos;innovation.
+                </li>
+                <li>
+                  <span className="font-semibold text-accent-200">Fondatrice 2</span> – experte en matières premières
+                  et en qualité artisanale.
+                </li>
+                <li>
+                  <span className="font-semibold text-accent-200">Fondatrice 3</span> – vision créative tournée vers la
+                  durabilité et l&apos;authenticité.
+                </li>
+              </ul>
+              <p className="text-sm sm:text-base text-accent-100 leading-relaxed mt-4">
+                Ensemble, elles imaginent des pièces qui racontent une histoire, et qui sont pensées pour vous
+                accompagner longtemps.
+              </p>
             </Card>
           </div>
-
-          {/* Team */}
-          <Card className="p-4 sm:p-6 md:p-8 bg-primary-900/70 backdrop-blur-md border border-primary-800 shadow-lg text-primary-50">
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4">Notre Équipe</h2>
-            <p className="text-xs sm:text-sm md:text-base text-accent-100 leading-relaxed whitespace-pre-line">
-              {teamContent}
-            </p>
-          </Card>
         </div>
       </section>
     </div>

@@ -6,7 +6,7 @@ import { useSession } from 'next-auth/react'
 import { useCart } from '@/hooks'
 import { Button, Input } from '@/components/ui'
 import { Card } from '@/components/ui'
-import { ArrowLeft, ArrowRight, MessageCircle, Mail, AlertCircle } from 'lucide-react'
+import { ArrowLeft, ArrowRight, MessageCircle, Mail, AlertCircle, Info } from 'lucide-react'
 import Link from 'next/link'
 import { formatPrice } from '@/lib/utils'
 
@@ -279,8 +279,11 @@ export default function CheckoutPage() {
               </div>
 
               <div className="mt-6 p-4 bg-white/10 rounded-lg border border-white/20">
-                <p className="text-sm text-white/90">
-                  ℹ️ Vous serez redirigé vers {contactMethod === 'whatsapp' ? 'WhatsApp' : 'votre email'} pour finaliser votre commande.
+                <p className="text-sm text-white/90 flex items-center gap-2">
+                  <Info className="w-4 h-4 text-white/90" aria-hidden="true" />
+                  <span>
+                    Vous serez redirigé vers {contactMethod === 'whatsapp' ? 'WhatsApp' : 'votre email'} pour finaliser votre commande.
+                  </span>
                 </p>
               </div>
             </Card>

@@ -48,7 +48,7 @@ export async function sendWhatsAppViaTwilio(
   message: string
 ): Promise<boolean> {
   if (!process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN) {
-    console.warn('⚠️ Twilio non configuré. Utilisez le lien WhatsApp à la place.')
+    console.warn('Twilio non configuré. Utilisez le lien WhatsApp à la place.')
     return false
   }
 
@@ -76,14 +76,14 @@ export async function sendWhatsAppViaTwilio(
     )
 
     if (response.ok) {
-      console.log('✅ Message WhatsApp envoyé via Twilio')
+      console.log('Message WhatsApp envoyé via Twilio')
       return true
     } else {
-      console.error('❌ Erreur Twilio:', await response.text())
+      console.error('Erreur Twilio:', await response.text())
       return false
     }
   } catch (error) {
-    console.error('❌ Erreur WhatsApp:', error)
+    console.error('Erreur WhatsApp:', error)
     return false
   }
 }

@@ -53,11 +53,12 @@ export async function POST(req: NextRequest) {
     })
 
     // Notifier l'admin
-    const message = `📝 Nouvelle demande personnalisée\n\n` +
-      `📧 Email: ${body.email}\n` +
-      `📋 Description: ${body.description}\n` +
-      `💰 Budget: ${body.budget ? body.budget + '€' : 'Non spécifié'}\n` +
-      `📅 Délai: ${body.deadline || 'Non spécifié'}`
+    const message =
+      `Nouvelle demande personnalisée\n\n` +
+      `Email: ${body.email}\n` +
+      `Description: ${body.description}\n` +
+      `Budget: ${body.budget ? body.budget + '€' : 'Non spécifié'}\n` +
+      `Délai: ${body.deadline || 'Non spécifié'}`
     
     console.log('Admin notification:', message)
 

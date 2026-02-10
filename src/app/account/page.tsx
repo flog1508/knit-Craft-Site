@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks'
 import { Card, Button } from '@/components/ui'
 import Link from 'next/link'
-import { User, Package, LogOut } from 'lucide-react'
+import { User, Package, LogOut, Heart, ShoppingBag, Mail, Info } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 
 export default function AccountPage() {
@@ -88,7 +88,7 @@ export default function AccountPage() {
           {/* Wishlist */}
           <Card className="p-8 hover:shadow-lg transition-shadow">
             <div className="flex items-center gap-3 mb-4">
-              <span className="text-3xl">❤️</span>
+              <Heart className="w-8 h-8 text-red-500" aria-hidden="true" />
               <h3 className="text-2xl font-bold text-gray-900">Mes Favoris</h3>
             </div>
             <p className="text-gray-600 mb-6">Consultez vos produits favoris sauvegardés</p>
@@ -102,19 +102,19 @@ export default function AccountPage() {
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
           <Link href="/shop">
             <Card className="p-6 text-center hover:shadow-lg transition-shadow cursor-pointer">
-              <span className="text-4xl mb-3 block">🛍️</span>
+              <ShoppingBag className="w-10 h-10 mx-auto mb-3 text-primary-600" aria-hidden="true" />
               <h3 className="font-semibold text-gray-900">Continuer les achats</h3>
             </Card>
           </Link>
           <Link href="/contact">
             <Card className="p-6 text-center hover:shadow-lg transition-shadow cursor-pointer">
-              <span className="text-4xl mb-3 block">📧</span>
+              <Mail className="w-10 h-10 mx-auto mb-3 text-primary-600" aria-hidden="true" />
               <h3 className="font-semibold text-gray-900">Nous contacter</h3>
             </Card>
           </Link>
           <Link href="/about">
             <Card className="p-6 text-center hover:shadow-lg transition-shadow cursor-pointer">
-              <span className="text-4xl mb-3 block">ℹ️</span>
+              <Info className="w-10 h-10 mx-auto mb-3 text-primary-600" aria-hidden="true" />
               <h3 className="font-semibold text-gray-900">À propos</h3>
             </Card>
           </Link>

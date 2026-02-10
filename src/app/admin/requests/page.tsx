@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { Sparkles, MessageCircle } from 'lucide-react'
 
 interface CustomRequest {
   id: string
@@ -44,11 +45,11 @@ export default function AdminRequests() {
       
       if (res.ok) {
         fetchRequests()
-        alert('✅ Demande mise à jour !')
+        alert('Demande mise à jour !')
       }
     } catch (error) {
       console.error('Erreur:', error)
-      alert('❌ Erreur lors de la mise à jour')
+      alert('Erreur lors de la mise à jour')
     }
   }
 
@@ -56,11 +57,11 @@ export default function AdminRequests() {
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case 'PENDING': return '⏳ En attente'
-      case 'ACCEPTED': return '✅ Acceptée'
-      case 'IN_PROGRESS': return '🔄 En cours'
-      case 'COMPLETED': return '🎉 Terminée'
-      case 'REJECTED': return '❌ Rejetée'
+      case 'PENDING': return 'En attente'
+      case 'ACCEPTED': return 'Acceptée'
+      case 'IN_PROGRESS': return 'En cours'
+      case 'COMPLETED': return 'Terminée'
+      case 'REJECTED': return 'Rejetée'
       default: return status
     }
   }
@@ -69,7 +70,10 @@ export default function AdminRequests() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-6 text-white">✨ Demandes Personnalisées (Sur Mesure)</h1>
+      <h1 className="text-3xl font-bold mb-6 text-white flex items-center gap-3">
+        <Sparkles className="w-7 h-7 text-accent-300" aria-hidden="true" />
+        <span>Demandes Personnalisées (Sur Mesure)</span>
+      </h1>
 
       {/* Filtres */}
       <div className="bg-white/20 backdrop-blur-md rounded-lg shadow p-6 mb-6">
@@ -168,9 +172,10 @@ export default function AdminRequests() {
                   href={`https://wa.me/${(process.env.NEXT_PUBLIC_CONTACT_PHONE || process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '243987352719').replace(/\D/g, '')}?text=Bonjour, concernant votre demande personnalisée de ${request.email}...`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-green-600 text-white px-4 py-2 rounded font-bold hover:bg-green-700 inline-block"
+                  className="bg-green-600 text-white px-4 py-2 rounded font-bold hover:bg-green-700 inline-flex items-center gap-2"
                 >
-                  💬 Contacter via WhatsApp
+                  <MessageCircle className="w-5 h-5" aria-hidden="true" />
+                  <span>Contacter via WhatsApp</span>
                 </a>
               </div>
             </div>

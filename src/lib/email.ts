@@ -41,7 +41,7 @@ export async function sendOrderEmail(
 
     // Vérifier que Gmail ou un SMTP est bien configuré
     if (!process.env.SMTP_HOST && !process.env.GMAIL_USER) {
-      console.error('❌ Email: aucun SMTP ni GMAIL_USER configuré (.env)')
+      console.error('Email: aucun SMTP ni GMAIL_USER configuré (.env)')
       return { ok: false, error: 'Configuration email manquante (SMTP ou GMAIL_USER)' }
     }
 
@@ -49,7 +49,7 @@ export async function sendOrderEmail(
       await transporter.verify()
     } catch (verifyErr: any) {
       const msg = verifyErr?.message || String(verifyErr)
-      console.error('❌ Email SMTP verify:', msg)
+      console.error('Email SMTP verify:', msg)
       return { ok: false, error: `Connexion SMTP impossible: ${msg}` }
     }
 
@@ -125,11 +125,11 @@ ${siteName}`
       text,
     })
 
-    console.log(`✅ Email envoyé à ${to}`)
+    console.log(`Email envoyé à ${to}`)
     return { ok: true }
   } catch (error: any) {
     const msg = error?.message || String(error)
-    console.error('❌ Erreur envoi email:', msg)
+    console.error('Erreur envoi email:', msg)
     return { ok: false, error: msg }
   }
 }
@@ -152,7 +152,7 @@ export async function sendAdminNotification(
     const productList = products.map(p => `- ${p.name} x${p.quantity}`).join('\n')
 
     const html = `
-      <h2>🚨 Nouvelle Commande #${orderData.orderNumber}</h2>
+      <h2>Nouvelle commande #${orderData.orderNumber}</h2>
       <p><strong>Client:</strong> ${orderData.clientName}</p>
       <p><strong>Email:</strong> ${orderData.clientEmail}</p>
       <p><strong>Téléphone:</strong> ${orderData.clientPhone}</p>
@@ -173,14 +173,14 @@ export async function sendAdminNotification(
     await transporter.sendMail({
       from: process.env.EMAIL_FROM || process.env.GMAIL_USER || process.env.SMTP_USER,
       to: adminEmail,
-      subject: `🛍️ Nouvelle commande #${orderData.orderNumber}`,
+      subject: `Nouvelle commande #${orderData.orderNumber}`,
       html,
     })
 
-    console.log(`✅ Notification admin envoyée`)
+    console.log(`Notification admin envoyée`)
     return true
   } catch (error) {
-    console.error('❌ Erreur notification admin:', error)
+    console.error('Erreur notification admin:', error)
     return false
   }
 }

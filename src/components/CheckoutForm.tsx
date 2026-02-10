@@ -54,7 +54,7 @@ export default function CheckoutForm({ productId }: CheckoutProps) {
         
         if (res.ok) {
           setSuccess(true)
-          alert('✅ Demande reçue ! Nous vous contacterons bientôt.')
+          alert('Demande reçue ! Nous vous contacterons bientôt.')
         } else {
           throw new Error('Erreur lors de l\'envoi de la demande')
         }
@@ -80,7 +80,7 @@ export default function CheckoutForm({ productId }: CheckoutProps) {
             setWhatsappLink(data.whatsappLink)
             setSuccess(true)
           } else {
-            alert('✅ ' + data.message)
+            alert(data.message)
             setSuccess(true)
           }
         } else {
@@ -101,7 +101,7 @@ export default function CheckoutForm({ productId }: CheckoutProps) {
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
         <div className="bg-white rounded-lg p-8 max-w-md w-full text-center">
-          <h2 className="text-2xl font-bold mb-4">✅ Commande créée !</h2>
+          <h2 className="text-2xl font-bold mb-4">Commande créée !</h2>
           <p className="text-gray-600 mb-6">
             Cliquez sur le bouton ci-dessous pour confirmer via WhatsApp
           </p>
@@ -111,7 +111,7 @@ export default function CheckoutForm({ productId }: CheckoutProps) {
             rel="noopener noreferrer"
             className="bg-green-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-green-700 inline-block"
           >
-            💬 Ouvrir WhatsApp
+            Ouvrir WhatsApp
           </a>
           <button
             onClick={() => {
@@ -267,12 +267,13 @@ export default function CheckoutForm({ productId }: CheckoutProps) {
           <select
             value={variantId}
             onChange={(e) => setVariantId(e.target.value)}
+            aria-label="Choisir un délai de livraison"
             className="w-full px-4 py-2 border rounded"
           >
             <option value="">Sélectionner un délai...</option>
-            <option value="normal">⏱️ Normal - 7-10 jours (1.0x prix)</option>
-            <option value="express">🚀 Express - 3-5 jours (1.5x prix)</option>
-            <option value="premium">⚡ Premium - 1-3 jours (2.0x prix)</option>
+            <option value="normal">Normal - 7-10 jours (1.0x prix)</option>
+            <option value="express">Express - 3-5 jours (1.5x prix)</option>
+            <option value="premium">Premium - 1-3 jours (2.0x prix)</option>
           </select>
         </div>
       )}
@@ -290,7 +291,7 @@ export default function CheckoutForm({ productId }: CheckoutProps) {
                 onChange={(e) => setSendVia(e.target.value as any)}
                 className="mr-2"
               />
-              <span>💬 WhatsApp</span>
+              <span>WhatsApp</span>
             </label>
             <label className="flex items-center">
               <input
@@ -300,7 +301,7 @@ export default function CheckoutForm({ productId }: CheckoutProps) {
                 onChange={(e) => setSendVia(e.target.value as any)}
                 className="mr-2"
               />
-              <span>📧 Email</span>
+              <span>Email</span>
             </label>
           </div>
         </div>
@@ -315,7 +316,7 @@ export default function CheckoutForm({ productId }: CheckoutProps) {
         disabled={loading}
         className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {loading ? '⏳ Traitement...' : '✓ Valider la commande'}
+        {loading ? 'Traitement...' : 'Valider la commande'}
       </button>
     </form>
   )

@@ -16,6 +16,12 @@ body {
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }
 
+/* Police légèrement plus dessinée pour les boutons/ liens du header */
+.font-handwritten {
+  font-family: 'Trebuchet MS', 'Segoe UI Rounded', system-ui, -apple-system, BlinkMacSystemFont,
+    'Segoe UI', sans-serif;
+}
+
 /* Scrollbar personnalisée */
 ::-webkit-scrollbar {
   width: 8px;

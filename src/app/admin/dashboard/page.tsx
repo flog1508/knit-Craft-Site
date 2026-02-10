@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import { Package, Shirt, Sparkles, FileText, Lightbulb, Inbox, Bell, CheckCircle, Cog, Truck, XCircle } from 'lucide-react'
 import { Order } from '@/types'
 import { formatPrice, formatDateTime } from '@/lib/utils'
 
@@ -71,7 +72,7 @@ export default function AdminDashboard() {
               <p className="text-gray-600 text-sm font-medium">Commandes</p>
               <p className="text-4xl font-bold text-blue-600 mt-2">{loading ? '...' : stats.orders}</p>
             </div>
-            <div className="text-6xl">📦</div>
+            <Package className="w-14 h-14 text-blue-600" aria-hidden="true" />
           </div>
         </div>
 
@@ -81,7 +82,7 @@ export default function AdminDashboard() {
               <p className="text-gray-600 text-sm font-medium">Produits</p>
               <p className="text-4xl font-bold text-green-600 mt-2">{loading ? '...' : stats.products}</p>
             </div>
-            <div className="text-6xl">👗</div>
+            <Shirt className="w-14 h-14 text-green-600" aria-hidden="true" />
           </div>
         </div>
 
@@ -91,7 +92,7 @@ export default function AdminDashboard() {
               <p className="text-gray-600 text-sm font-medium">Demandes Sur Mesure</p>
               <p className="text-4xl font-bold text-purple-600 mt-2">{loading ? '...' : stats.customRequests}</p>
             </div>
-            <div className="text-6xl">✨</div>
+            <Sparkles className="w-14 h-14 text-purple-600" aria-hidden="true" />
           </div>
         </div>
       </div>
@@ -103,7 +104,7 @@ export default function AdminDashboard() {
           href="/admin/products"
           className="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl hover:scale-105 transition cursor-pointer block"
         >
-          <div className="text-6xl mb-4">👗</div>
+          <Shirt className="w-14 h-14 mb-4 text-primary-600" aria-hidden="true" />
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Gérer les Produits</h2>
           <p className="text-gray-600 mb-4">
             Ajouter de nouveaux produits, modifier les existants ou en supprimer
@@ -118,7 +119,7 @@ export default function AdminDashboard() {
           href="/admin/about"
           className="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl hover:scale-105 transition cursor-pointer block"
         >
-          <div className="text-6xl mb-4">📝</div>
+          <FileText className="w-14 h-14 mb-4 text-green-600" aria-hidden="true" />
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Éditer &quot;À Propos&quot;</h2>
           <p className="text-gray-600 mb-4">
             Modifiez votre présentation, biographie et photo
@@ -133,7 +134,7 @@ export default function AdminDashboard() {
           href="/admin/orders"
           className="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl hover:scale-105 transition cursor-pointer block"
         >
-          <div className="text-6xl mb-4">📦</div>
+          <Package className="w-14 h-14 mb-4 text-purple-600" aria-hidden="true" />
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Voir les Commandes</h2>
           <p className="text-gray-600 mb-4">
             Consultez les commandes reçues et mettez à jour leur statut
@@ -148,7 +149,7 @@ export default function AdminDashboard() {
           href="/admin/requests"
           className="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl hover:scale-105 transition cursor-pointer block"
         >
-          <div className="text-6xl mb-4">✨</div>
+          <Sparkles className="w-14 h-14 mb-4 text-pink-500" aria-hidden="true" />
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Demandes Personnalisées</h2>
           <p className="text-gray-600 mb-4">
             Répondez aux demandes sur mesure de vos clients
@@ -161,7 +162,10 @@ export default function AdminDashboard() {
 
       {/* Aide rapide */}
       <div className="mt-12 bg-blue-50 border-l-4 border-blue-600 p-6 rounded">
-        <h3 className="font-bold text-blue-900 mb-2">💡 Besoin d&apos;aide ?</h3>
+        <h3 className="font-bold text-blue-900 mb-2 flex items-center gap-2">
+          <Lightbulb className="w-5 h-5 text-blue-700" aria-hidden="true" />
+          <span>Besoin d&apos;aide ?</span>
+        </h3>
         <p className="text-blue-800">
           Tous les formulaires sont simples et intuitifs. N&apos;hésitez pas à explorer ! 
           Si quelque chose ne fonctionne pas comme prévu, revenez simplement en arrière.
@@ -171,7 +175,10 @@ export default function AdminDashboard() {
       {/* Boîte mail - Notifications de commandes */}
       <div className="mt-12">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">📬 Dernières commandes</h2>
+          <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+            <Inbox className="w-6 h-6" aria-hidden="true" />
+            <span>Dernières commandes</span>
+          </h2>
           <Link href="/admin/orders" className="text-primary-600 hover:text-primary-700 font-medium">
             Voir toutes →
           </Link>
@@ -190,11 +197,12 @@ export default function AdminDashboard() {
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
                         <span className="text-2xl">
-                          {order.status === 'PENDING' ? '🔔' : 
-                           order.status === 'CONFIRMED' ? '✅' : 
-                           order.status === 'PROCESSING' ? '⚙️' : 
-                           order.status === 'SHIPPED' ? '🚚' : 
-                           order.status === 'DELIVERED' ? '📦' : '❌'}
+                          {order.status === 'PENDING' && <Bell className="w-6 h-6 text-yellow-500" aria-hidden="true" />}
+                          {order.status === 'CONFIRMED' && <CheckCircle className="w-6 h-6 text-green-600" aria-hidden="true" />}
+                          {order.status === 'PROCESSING' && <Cog className="w-6 h-6 text-blue-600" aria-hidden="true" />}
+                          {order.status === 'SHIPPED' && <Truck className="w-6 h-6 text-purple-600" aria-hidden="true" />}
+                          {order.status === 'DELIVERED' && <Package className="w-6 h-6 text-green-700" aria-hidden="true" />}
+                          {order.status === 'CANCELLED' && <XCircle className="w-6 h-6 text-red-500" aria-hidden="true" />}
                         </span>
                         <div>
                           <p className="font-bold text-gray-900">{order.orderNumber}</p>
