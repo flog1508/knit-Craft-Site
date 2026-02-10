@@ -1,4 +1,5 @@
 'use client'
+/* eslint-disable @next/next/no-img-element */
 
 import React, { useRef, useState } from 'react'
 import { Upload, Trash2, ImagePlus } from 'lucide-react'
@@ -96,6 +97,7 @@ export const ImageDropZone: React.FC<ImageDropZoneProps> = ({
           accept="image/*"
           className="hidden"
           disabled={isLoading}
+          aria-label={label}
         />
 
         {preview ? (

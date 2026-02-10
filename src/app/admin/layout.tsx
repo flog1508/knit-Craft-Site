@@ -1,4 +1,5 @@
 'use client'
+/* eslint-disable @next/next/no-img-element */
 
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
@@ -21,6 +22,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [isAdmin, setIsAdmin] = useState(false)
   const [loading, setLoading] = useState(true)
 
+  // Vérification admin au montage (on ne met pas checkAdmin dans les deps pour éviter une boucle)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     checkAdmin()
   }, [])

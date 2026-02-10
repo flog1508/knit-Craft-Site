@@ -1,4 +1,5 @@
 'use client'
+/* eslint-disable @next/next/no-img-element */
 
 import React, { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
@@ -26,6 +27,8 @@ export default function AdminOrderDetailPage() {
     estimatedDays: 0,
   })
 
+  // Chargement de la commande quand l'admin est connecté
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (isAdmin) {
       fetchOrder()
@@ -256,6 +259,7 @@ export default function AdminOrderDetailPage() {
                   <label className="block text-sm font-medium text-white mb-2">Statut</label>
                   <select
                     name="status"
+                    aria-label="Statut de la commande"
                     value={formData.status}
                     onChange={handleChange}
                     className="w-full px-3 py-2 bg-gray-800 border border-white/30 rounded-lg text-white focus:outline-none focus:border-blue-300 [&>option]:bg-gray-800 [&>option]:text-white"

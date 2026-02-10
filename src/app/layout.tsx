@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Providers } from './providers'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
@@ -9,7 +9,11 @@ export const metadata: Metadata = {
   description:
     'Découvrez nos créations artisanales de tricot et crochet. Produits personnalisés, sur mesure et commande WhatsApp.',
   keywords: ['tricot', 'crochet', 'handmade', 'artisanal', 'fait main'],
-  viewport: 'width=device-width, initial-scale=1.0',
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

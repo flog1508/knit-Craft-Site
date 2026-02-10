@@ -16,6 +16,8 @@ export default function AdminDashboard() {
     totalRevenue: 0,
   })
 
+  // Récupère les stats une fois que l'admin est authentifié
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (isAdmin) {
       fetchStats()
@@ -23,6 +25,7 @@ export default function AdminDashboard() {
   }, [isAdmin])
 
   // Réactualiser les stats quand on revient sur le dashboard (ex: après confirmation d'une commande)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!isAdmin) return
     const handleFocus = () => fetchStats()

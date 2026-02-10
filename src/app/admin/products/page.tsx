@@ -1,4 +1,5 @@
 'use client'
+/* eslint-disable @next/next/no-img-element */
 
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '@/hooks'
@@ -14,6 +15,8 @@ export default function AdminProductsPage() {
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
 
+  // Chargement des produits quand l'admin est connecté
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (isAdmin) {
       fetchProducts()
@@ -117,8 +120,20 @@ export default function AdminProductsPage() {
                     <td className="px-4 lg:px-6 py-3"><p className={product.isOutOfStock ? 'text-red-300' : 'text-green-300'}>{product.stock}</p></td>
                     <td className="px-4 lg:px-6 py-3"><p className="text-white/80 text-sm">{product.category}</p></td>
                     <td className="px-4 lg:px-6 py-3 text-right">
-                      <Link href={`/admin/products/${product.id}`} className="inline-block p-2 hover:bg-white/20 rounded mr-1"><Edit3 className="w-4 h-4 text-blue-300" /></Link>
-                      <button onClick={() => deleteProduct(product.id)} className="p-2 hover:bg-white/20 rounded"><Trash2 className="w-4 h-4 text-red-300" /></button>
+                      <Link
+                        href={`/admin/products/${product.id}`}
+                        className="inline-block p-2 hover:bg-white/20 rounded mr-1"
+                        aria-label={`Modifier le produit ${product.name}`}
+                      >
+                        <Edit3 className="w-4 h-4 text-blue-300" />
+                      </Link>
+                      <button
+                        onClick={() => deleteProduct(product.id)}
+                        className="p-2 hover:bg-white/20 rounded"
+                        aria-label={`Supprimer le produit ${product.name}`}
+                      >
+                        <Trash2 className="w-4 h-4 text-red-300" />
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -140,8 +155,20 @@ export default function AdminProductsPage() {
                   <p className="text-xs text-white/60">Stock: {product.stock}</p>
                 </div>
                 <div className="flex flex-col gap-1 shrink-0">
-                  <Link href={`/admin/products/${product.id}`} className="p-2 bg-white/20 rounded"><Edit3 className="w-5 h-5 text-blue-300" /></Link>
-                  <button onClick={() => deleteProduct(product.id)} className="p-2 bg-white/20 rounded"><Trash2 className="w-5 h-5 text-red-300" /></button>
+                  <Link
+                    href={`/admin/products/${product.id}`}
+                    className="p-2 bg-white/20 rounded"
+                    aria-label={`Modifier le produit ${product.name}`}
+                  >
+                    <Edit3 className="w-5 h-5 text-blue-300" />
+                  </Link>
+                  <button
+                    onClick={() => deleteProduct(product.id)}
+                    className="p-2 bg-white/20 rounded"
+                    aria-label={`Supprimer le produit ${product.name}`}
+                  >
+                    <Trash2 className="w-5 h-5 text-red-300" />
+                  </button>
                 </div>
               </div>
             </div>

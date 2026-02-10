@@ -43,6 +43,8 @@ export default function AdminProductEditPage() {
     deliveryDaysMax: 10,
   })
 
+  // Chargement du produit existant une fois l'admin connecté
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (isAdmin && !isNew) {
       fetchProduct()
@@ -317,6 +319,7 @@ export default function AdminProductEditPage() {
                 <label className="block text-sm font-medium text-white mb-2">Catégorie</label>
                 <select
                   name="category"
+                  aria-label="Catégorie du produit"
                   value={formData.category}
                   onChange={handleChange}
                   className="w-full px-4 py-2.5 bg-white/15 border border-white/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/40 text-white appearance-none cursor-pointer [&>option]:bg-gray-800 [&>option]:text-white"
@@ -366,6 +369,7 @@ export default function AdminProductEditPage() {
                           type="button"
                           onClick={() => removeImage(index)}
                           className="self-end p-2 hover:bg-red-600/20 rounded"
+                          aria-label={`Supprimer l'image ${index + 1}`}
                         >
                           <Trash2 className="w-5 h-5 text-red-300" />
                         </button>
@@ -479,6 +483,7 @@ export default function AdminProductEditPage() {
                       type="button"
                       onClick={() => deleteVariant(v.id)}
                       className="p-2 hover:bg-red-600/20 rounded text-red-300"
+                      aria-label={`Supprimer l'option ${v.name}`}
                     >
                       <Trash2 className="w-5 h-5" />
                     </button>

@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -336,8 +336,8 @@ model Review {
   comment   String    @db.Text
   isVerified Boolean  @default(false)
   helpful   Int       @default(0)
-  image     String?   @db.LongText  // URL ou base64 de l'image (optionnel)
-  video     String?   @db.LongText  // URL ou base64 de la vidéo (optionnel)
+  image     String?   @db.Text  // URL ou base64 de l'image (optionnel)
+  video     String?   @db.Text  // URL ou base64 de la vidéo (optionnel)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 

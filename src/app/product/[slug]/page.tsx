@@ -25,6 +25,8 @@ export default function ProductPage() {
   const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null)
   const [variants, setVariants] = useState<any[]>([])
 
+  // Chargement du produit pour le slug courant
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchProduct()
   }, [slug])
@@ -143,10 +145,14 @@ export default function ProductPage() {
             </div>
 
             {/* Thumbnails */}
-                {product.images && product.images.length > 0 && (
+            {product.images && product.images.length > 0 && (
               <div className="grid grid-cols-4 gap-4">
                 {product.images.map((img: any, idx: number) => (
-                  <button key={idx} className="aspect-square bg-gray-200 rounded-lg overflow-hidden">
+                  <button
+                    key={idx}
+                    className="aspect-square bg-gray-200 rounded-lg overflow-hidden"
+                    aria-label={`Voir l'image ${idx + 1} du produit`}
+                  >
                     <ImageWithFallback src={getImageUrl(img)} alt="" fill className="object-cover" />
                   </button>
                 ))}
@@ -318,7 +324,12 @@ function ReviewForm({ productId }: { productId: string }) {
       </div>
       <div>
         <label className="block text-sm text-gray-700 mb-2">Note</label>
-        <select value={rating} onChange={(e) => setRating(Number(e.target.value))} className="border p-2 rounded">
+        <select
+          value={rating}
+          onChange={(e) => setRating(Number(e.target.value))}
+          className="border p-2 rounded"
+          aria-label="Note du produit"
+        >
           {[5,4,3,2,1].map(r => <option key={r} value={r}>{r} étoiles</option>)}
         </select>
       </div>

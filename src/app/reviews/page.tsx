@@ -1,4 +1,5 @@
 'use client'
+/* eslint-disable @next/next/no-img-element */
 
 import React, { useState, useEffect } from 'react'
 import { Card, Button, Input } from '@/components/ui'
@@ -275,6 +276,7 @@ export default function ReviewsPage() {
                 value={formData.rating}
                 onChange={handleChange}
                 className="w-full px-3 sm:px-4 py-2.5 text-sm bg-transparent border-2 border-primary-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-400/40 focus:border-accent-400 text-primary-50 appearance-none cursor-pointer [&>option]:bg-primary-900 [&>option]:text-primary-50"
+                aria-label="Note donnée dans l'avis"
               >
                 {[1, 2, 3, 4, 5].map(n => (
                   <option key={n} value={n}>{n} étoile{n > 1 ? 's' : ''}</option>
@@ -327,6 +329,7 @@ export default function ReviewsPage() {
                       type="button"
                       onClick={removeImage}
                       className="p-2 text-red-300 hover:bg-primary-900/60 rounded-lg transition"
+                      aria-label="Supprimer l'image sélectionnée"
                     >
                       <X className="w-5 h-5" />
                     </button>
@@ -421,7 +424,7 @@ export default function ReviewsPage() {
                     type="button"
                     onClick={() => handleHelpful(review.id)}
                     disabled={!!helpfulDisabled[review.id]}
-                    aria-disabled={!!helpfulDisabled[review.id]}
+                    aria-disabled={helpfulDisabled[review.id] ? true : false}
                     className={`flex items-center gap-2 text-xs text-gray-700 transition-colors ${
                       helpfulDisabled[review.id] ? 'opacity-50 cursor-not-allowed' : 'hover:text-primary-600'
                     }`}
@@ -440,7 +443,12 @@ export default function ReviewsPage() {
         {lightboxSrc && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70" onClick={() => setLightboxSrc('')}>
             <div className="relative max-w-3xl w-full p-4" onClick={(e) => e.stopPropagation()}>
-              <button type="button" onClick={() => setLightboxSrc('')} className="absolute top-2 right-2 p-2 bg-white rounded-full">
+              <button
+                type="button"
+                onClick={() => setLightboxSrc('')}
+                className="absolute top-2 right-2 p-2 bg-white rounded-full"
+                aria-label="Fermer l'image agrandie"
+              >
                 <X className="w-4 h-4" />
               </button>
               <div className="w-full rounded-lg overflow-hidden">

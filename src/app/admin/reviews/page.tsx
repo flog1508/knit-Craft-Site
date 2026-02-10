@@ -1,4 +1,5 @@
 'use client'
+/* eslint-disable @next/next/no-img-element */
 
 import React, { useEffect, useState } from 'react'
 import { useAuth } from '@/hooks'
@@ -11,6 +12,8 @@ export default function AdminReviewsPage() {
   const { isAdmin, isLoading } = useAuth()
   const [reviews, setReviews] = useState<any[]>([])
 
+  // Chargement des avis côté admin
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (isAdmin) fetchReviews()
   }, [isAdmin])
