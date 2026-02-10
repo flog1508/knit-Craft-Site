@@ -132,6 +132,7 @@ model Product {
   @@index([slug])
   @@index([category])
   @@index([isOutOfStock])
+  @@map("Product")
 }
 
 // Variantes de délai (Normal: 7-10 jours, Express: 3-5 jours, etc)
@@ -161,6 +162,7 @@ model CustomOption {
   product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@index([productId])
+  @@map("customoption")
 }
 
 // ==================== CART ====================

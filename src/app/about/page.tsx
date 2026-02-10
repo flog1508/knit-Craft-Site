@@ -157,6 +157,30 @@ export default function AboutPage() {
               </p>
             </Card>
           </div>
+
+          {/* Section repliable pour accès administrateur */}
+          <div className="pt-8 border-t border-primary-800/60 mt-8">
+            <details className="group">
+              <summary className="flex items-center justify-between cursor-pointer text-sm sm:text-base text-accent-200 hover:text-accent-100">
+                <span>Espace réservé à l&apos;administration</span>
+                <span className="ml-3 text-xs text-accent-300 group-open:hidden">cliquer pour dérouler</span>
+                <span className="ml-3 text-xs text-accent-300 hidden group-open:inline">cliquer pour replier</span>
+              </summary>
+              <div className="mt-4 pl-1 border-l border-primary-800/60">
+                <p className="text-xs sm:text-sm text-accent-200 mb-3">
+                  Cet espace est réservé à l&apos;administration du site Knit &amp; Craft.
+                </p>
+                <Link href="/auth/signin">
+                  <Button
+                    size="sm"
+                    className="bg-accent-400 text-primary-950 hover:bg-accent-300 shadow-md shadow-primary-900/40"
+                  >
+                    Se connecter à l&apos;espace admin
+                  </Button>
+                </Link>
+              </div>
+            </details>
+          </div>
         </div>
       </section>
     </div>
