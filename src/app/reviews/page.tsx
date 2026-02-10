@@ -108,7 +108,7 @@ export default function ReviewsPage() {
   return (
     <div className="bg-primary-950">
       <section className="relative min-h-screen overflow-hidden bg-primary-900">
-        <div className="absolute inset-0 opacity-100 mix-blend-multiply bg-[url('/images/why-choose.jpg')] bg-cover bg-center" />
+        <div className="absolute inset-0 opacity-100 mix-blend-multiply bg-[url('/images/why-choose.jpg')] bg-cover bg-center bg-fixed" />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 md:py-20 space-y-12">
           {/* Header */}

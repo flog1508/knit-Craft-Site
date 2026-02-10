@@ -1,28 +1,23 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
 import { ProductCard } from '@/components/ProductCard'
-import { Input, Button } from '@/components/ui'
+import { Button } from '@/components/ui'
 import { Product } from '@/types'
-import { Search, AlertCircle, Sparkles } from 'lucide-react'
+import { Search, Sparkles, X } from 'lucide-react'
 import Link from 'next/link'
+import { useCart } from '@/hooks'
+import { formatPrice, calculateDiscountedPrice, getImageUrl } from '@/lib/utils'
+import ImageWithFallback from '@/components/ImageWithFallback'
 
 export default function ShopPage() {
-  const { data: session } = useSession()
-  const router = useRouter()
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
-
-  // Rediriger l'admin vers le dashboard
-  useEffect(() => {
-    if (session?.user && (session.user as any).role?.toUpperCase() === 'ADMIN') {
-      router.push('/admin')
-    }
-  }, [session, router])
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
+  const [modalQuantity, setModalQuantity] = useState(1)
+  const { addItem } = useCart()
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -40,20 +35,29 @@ export default function ShopPage() {
     fetchProducts()
   }, [])
 
-  // Si l'admin essaie d'accéder directement, montrer un message
-  if (session?.user && (session.user as any).role?.toUpperCase() === 'ADMIN') {
-    return (
-      <div className="min-h-screen bg-primary-950 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-primary-50">
-          <AlertCircle className="w-12 h-12 text-accent-300 mx-auto mb-4" />
-          <h1 className="text-3xl font-bold mb-4">Accès non disponible</h1>
-          <p className="text-accent-100 mb-8">L&apos;admin ne peut pas acheter des produits</p>
-          <Button variant="primary" onClick={() => router.push('/admin')}>
-            Aller au dashboard
-          </Button>
-        </div>
-      </div>
-    )
+  // Fermer la modal avec Échap
+  useEffect(() => {
+    if (!selectedProduct) return
+
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setSelectedProduct(null)
+      }
+    }
+
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [selectedProduct])
+
+  const handleAddToCart = (product: Product, quantity: number = 1) => {
+    addItem({
+      id: `${product.id}-${Date.now()}`,
+      cartId: 'temp',
+      productId: product.id,
+      quantity,
+      customizations: [],
+      product,
+    })
   }
 
   const filteredProducts = products.filter((product) => {
@@ -68,7 +72,7 @@ export default function ShopPage() {
     <div className="bg-primary-950">
       {/* Même style que la page d'accueil, mais avec l'image de la boutique */}
       <section className="relative overflow-hidden bg-primary-900">
-        <div className="absolute inset-0 opacity-100 mix-blend-multiply bg-[url('/images/cart-bg.jpeg')] bg-cover bg-center" />
+        <div className="absolute inset-0 opacity-100 mix-blend-multiply bg-[url('/images/cart-bg.jpeg')] bg-cover bg-center bg-fixed" />
 
         <div className="relative max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-10 sm:py-16 md:py-20 lg:py-24 space-y-10 sm:space-y-12 text-primary-50">
           {/* Hero Boutique */}
@@ -132,7 +136,15 @@ export default function ShopPage() {
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {filteredProducts.map((product) => (
-                  <ProductCard key={product.id} product={product} />
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    onClick={() => {
+                      setSelectedProduct(product)
+                      setModalQuantity(1)
+                    }}
+                    onAddToCart={() => handleAddToCart(product, 1)}
+                  />
                 ))}
               </div>
               <div className="mt-10 text-center">
@@ -148,6 +160,112 @@ export default function ShopPage() {
           )}
         </div>
       </section>
+
+      {/* Modal produit */}
+      {selectedProduct && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4"
+          onClick={() => setSelectedProduct(null)}
+        >
+          <div
+            className="relative max-w-4xl w-full bg-primary-900/95 border border-primary-800 rounded-2xl shadow-2xl shadow-primary-900/60 overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="absolute top-3 right-3 p-2 rounded-full bg-primary-800/80 text-accent-100 hover:bg-primary-700"
+              aria-label="Fermer"
+              onClick={() => setSelectedProduct(null)}
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 sm:p-8">
+              {/* Image */}
+              <div>
+                <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-primary-800">
+                  <ImageWithFallback
+                    src={getImageUrl(selectedProduct.image)}
+                    alt={selectedProduct.name}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              </div>
+
+              {/* Infos */}
+              <div className="flex flex-col gap-4 text-primary-50">
+                <div>
+                  <p className="uppercase tracking-[0.25em] text-accent-200 text-xs sm:text-sm mb-2">
+                    {selectedProduct.category}
+                  </p>
+                  <h2 className="text-2xl sm:text-3xl font-bold mb-2">{selectedProduct.name}</h2>
+                  <p className="text-sm sm:text-base text-accent-100">
+                    {selectedProduct.longDescription || selectedProduct.description}
+                  </p>
+                </div>
+
+                {/* Prix */}
+                <div className="mt-2">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-2xl sm:text-3xl font-bold">
+                      {formatPrice(
+                        calculateDiscountedPrice(
+                          selectedProduct.price,
+                          selectedProduct.discountPercentage
+                        )
+                      )}
+                    </span>
+                    {selectedProduct.discountPercentage > 0 && (
+                      <span className="text-sm text-accent-200/80 line-through">
+                        {formatPrice(selectedProduct.price)}
+                      </span>
+                    )}
+                  </div>
+                  <p className="mt-1 text-xs sm:text-sm text-accent-200">
+                    Livraison estimée : {selectedProduct.deliveryDaysMin || 7}-
+                    {selectedProduct.deliveryDaysMax || 10} jours
+                  </p>
+                </div>
+
+                {/* Quantité + bouton */}
+                <div className="mt-4 flex flex-col gap-3">
+                  <div className="inline-flex items-center gap-2">
+                    <span className="text-sm text-accent-100">Quantité</span>
+                    <div className="flex items-center border border-primary-700 rounded-lg overflow-hidden">
+                      <button
+                        className="px-3 py-1 text-accent-100 hover:bg-primary-800"
+                        onClick={() => setModalQuantity((q) => Math.max(1, q - 1))}
+                      >
+                        −
+                      </button>
+                      <span className="px-4 py-1 text-primary-50 font-semibold">
+                        {modalQuantity}
+                      </span>
+                      <button
+                        className="px-3 py-1 text-accent-100 hover:bg-primary-800"
+                        onClick={() => setModalQuantity((q) => q + 1)}
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+
+                  <Button
+                    size="lg"
+                    className="mt-1 w-full"
+                    onClick={() => {
+                      handleAddToCart(selectedProduct, modalQuantity)
+                      setSelectedProduct(null)
+                    }}
+                  >
+                    Ajouter au panier
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -11,7 +11,7 @@ export default function HomePage() {
     <div className="bg-primary-950">
       {/* Hero + Pourquoi nous choisir + CTA commande */}
       <section className="relative overflow-hidden bg-primary-900">
-        <div className="absolute inset-0 opacity-100 mix-blend-multiply bg-[url('/images/why-choose.jpg')] bg-cover bg-center" />
+        <div className="absolute inset-0 opacity-100 mix-blend-multiply bg-[url('/images/why-choose.jpg')] bg-cover bg-center bg-fixed" />
 
         <div className="relative max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-10 sm:py-16 md:py-20 lg:py-28 space-y-12 sm:space-y-16">
           {/* Hero */}

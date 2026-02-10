@@ -55,7 +55,7 @@ export default function BespokeOrderPage() {
     return (
       <div className="bg-primary-950">
         <section className="relative overflow-hidden bg-primary-900">
-          <div className="absolute inset-0 opacity-100 mix-blend-multiply bg-[url('/images/why-choose.jpg')] bg-cover bg-center" />
+          <div className="absolute inset-0 opacity-100 mix-blend-multiply bg-[url('/images/why-choose.jpg')] bg-cover bg-center bg-fixed" />
 
           <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
             <Card className="p-8 bg-primary-900/70 backdrop-blur-md rounded-2xl border border-primary-800 text-primary-50 shadow-lg shadow-primary-900/40">
@@ -79,7 +79,7 @@ export default function BespokeOrderPage() {
     <div className="bg-primary-950">
       {/* Même style que la page d'accueil, avec le même background (sans overlay supplémentaire) */}
       <section className="relative overflow-hidden bg-primary-900">
-        <div className="absolute inset-0 opacity-100 mix-blend-multiply bg-[url('/images/why-choose.jpg')] bg-cover bg-center" />
+        <div className="absolute inset-0 opacity-100 mix-blend-multiply bg-[url('/images/why-choose.jpg')] bg-cover bg-center bg-fixed" />
 
         <div className="relative max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-10 sm:py-16 md:py-20 lg:py-24 space-y-10 sm:space-y-12">
           {/* Hero 2 colonnes comme la home */}

@@ -1,23 +1,27 @@
 'use client'
 
 import React from 'react'
-import Image from 'next/image'
-import Link from 'next/link'
 import { Product } from '@/types'
-import { Badge, Card } from '@/components/ui'
+import { Badge, Card, Button } from '@/components/ui'
 import { formatPrice, calculateDiscountedPrice, getImageUrl } from '@/lib/utils'
 import ImageWithFallback from './ImageWithFallback'
+import { ShoppingCart } from 'lucide-react'
 
 interface ProductCardProps {
   product: Product
+  onClick?: () => void
+  onAddToCart?: () => void
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, onAddToCart }) => {
   const discountedPrice = calculateDiscountedPrice(product.price, product.discountPercentage)
 
   return (
-    <Link href={`/product/${product.slug}`}>
-      <Card hover className="overflow-hidden flex flex-col h-full bg-white/20 backdrop-blur-md border-0 shadow-lg">
+    <Card
+      hover
+      className="overflow-hidden flex flex-col h-full bg-white/20 backdrop-blur-md border-0 shadow-lg"
+      onClick={onClick}
+    >
         {/* Image Container */}
         <div className="relative w-full h-64 mb-4 overflow-hidden rounded-md bg-gray-100">
           <ImageWithFallback
@@ -62,11 +66,23 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           </div>
 
           {/* Delivery Time */}
-          <div className="text-xs text-white/70">
+          <div className="text-xs text-white/70 mb-4">
             Livraison: {product.deliveryDaysMin || 7}-{product.deliveryDaysMax || 10} jours
           </div>
+
+          {/* Add to cart */}
+          <Button
+            size="sm"
+            className="mt-auto inline-flex items-center justify-center gap-2"
+            onClick={(e) => {
+              e.stopPropagation()
+              onAddToCart?.()
+            }}
+          >
+            <ShoppingCart className="w-4 h-4" />
+            Ajouter au panier
+          </Button>
         </div>
       </Card>
-    </Link>
   )
 }

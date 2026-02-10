@@ -1,13 +1,12 @@
 import React from 'react'
 import clsx from 'clsx'
 
-interface CardProps {
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode
-  className?: string
   hover?: boolean
 }
 
-export const Card: React.FC<CardProps> = ({ children, className, hover = false }) => {
+export const Card: React.FC<CardProps> = ({ children, className, hover = false, ...rest }) => {
   const hasCustomBg = className?.includes('bg-') || className?.includes('backdrop-blur')
   return (
     <div
@@ -17,6 +16,7 @@ export const Card: React.FC<CardProps> = ({ children, className, hover = false }
         hover && 'transition-shadow duration-300 hover:shadow-lg cursor-pointer',
         className
       )}
+      {...rest}
     >
       {children}
     </div>

@@ -55,7 +55,7 @@ export const Header: React.FC = () => {
   ]
 
   return (
-    <header className="sticky top-0 z-50 bg-primary-900/95 backdrop-blur-md border-b border-primary-800 shadow-lg">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-primary-900/95 backdrop-blur-md border-b border-primary-800 shadow-lg">
       <div
         ref={headerRef}
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
@@ -91,6 +91,16 @@ export const Header: React.FC = () => {
 
           {/* Right Actions */}
           <div className="flex items-center gap-4 flex-shrink-0">
+            {/* Lien Admin visible uniquement si connecté ADMIN */}
+            {session?.user && (session.user as any).role?.toUpperCase() === 'ADMIN' && (
+              <Link
+                href="/admin"
+                className="hidden sm:inline text-accent-100 hover:text-accent-400 text-sm lg:text-base"
+              >
+                Admin
+              </Link>
+            )}
+
             {/* Cart (ne pas afficher sur la page panier) */}
             {pathname !== '/cart' && (
               <Link href="/cart" className="relative">
@@ -129,6 +139,17 @@ export const Header: React.FC = () => {
                     {item.label}
                   </Link>
                 ) : null
+              )}
+
+              {/* Lien Admin dans le menu mobile si connecté ADMIN */}
+              {session?.user && (session.user as any).role?.toUpperCase() === 'ADMIN' && (
+                <Link
+                  href="/admin"
+                  className="px-4 py-2 text-accent-100 hover:text-accent-400 hover:bg-primary-800/50 rounded transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Admin
+                </Link>
               )}
             </nav>
           </div>

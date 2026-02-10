@@ -17,10 +17,15 @@ export const Input: React.FC<InputProps> = ({
 }) => {
   const inputId = id || label?.toLowerCase().replace(/\s+/g, '-')
   
-  // Check if custom styling provided via className
+  // Détection d'un contexte sombre pour adapter les couleurs
   const isLight = className?.includes('text-white')
-  const labelClass = isLight ? 'text-white/90' : 'text-gray-700'
-  const helperClass = isLight ? 'text-white/60' : 'text-gray-500'
+  const isOnDarkBackground =
+    isLight ||
+    className?.includes('text-primary-50') ||
+    className?.includes('text-accent-100')
+
+  const labelClass = isOnDarkBackground ? 'text-white/90' : 'text-gray-700'
+  const helperClass = isOnDarkBackground ? 'text-white/60' : 'text-gray-500'
 
   return (
     <div className="w-full">

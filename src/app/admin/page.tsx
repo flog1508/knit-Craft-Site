@@ -51,18 +51,18 @@ export default function AdminDashboard() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p>Chargement...</p>
+      <div className="min-h-screen bg-primary-950 flex items-center justify-center">
+        <p className="text-accent-100">Chargement...</p>
       </div>
     )
   }
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
-        <Card className="max-w-md p-8 text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Accès Refusé</h1>
-          <p className="text-gray-600">Vous devez être admin pour accéder à ce dashboard</p>
+      <div className="min-h-screen bg-primary-950 flex items-center justify-center py-12 px-4">
+        <Card className="max-w-md p-8 text-center bg-primary-900/80 border border-primary-800 text-primary-50">
+          <h1 className="text-2xl font-bold mb-4">Accès Refusé</h1>
+          <p className="text-accent-100">Vous devez être admin pour accéder à ce dashboard.</p>
         </Card>
       </div>
     )
@@ -90,16 +90,23 @@ export default function AdminDashboard() {
   ]
 
   return (
-    <div className="min-h-screen py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="py-10 sm:py-12 lg:py-16">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-12 bg-white/20 backdrop-blur-md rounded-lg shadow-lg p-8">
-          <h1 className="text-5xl font-bold text-white mb-2">Dashboard Admin</h1>
-          <p className="text-white/80">Bienvenue dans l&apos;administration Knit & Craft</p>
+        <div className="mb-10 sm:mb-12 bg-primary-900/80 border border-primary-800 rounded-2xl shadow-lg shadow-primary-900/40 p-6 sm:p-8">
+          <p className="uppercase tracking-[0.25em] text-accent-200 text-xs sm:text-sm mb-3">
+            Administration Knit &amp; Craft
+          </p>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary-50 mb-3">
+            Dashboard admin
+          </h1>
+          <p className="text-sm sm:text-base text-accent-100">
+            Suivez vos commandes, produits et avis dans un espace pensé comme le reste du site.
+          </p>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-6 mb-10 sm:mb-12">
           {[
             { label: 'Commandes', value: stats.totalOrders, icon: ShoppingCart },
             { label: 'Produits', value: stats.totalProducts, icon: Package },
@@ -107,13 +114,16 @@ export default function AdminDashboard() {
           ].map((stat, index) => {
             const Icon = stat.icon
             return (
-              <Card key={index} className="p-6 bg-white/20 backdrop-blur-md rounded-lg shadow-lg text-white">
-                <div className="flex items-center justify-between">
+              <Card
+                key={index}
+                className="p-5 sm:p-6 bg-primary-900/80 border border-primary-800 rounded-2xl shadow-lg shadow-primary-900/40 text-primary-50"
+              >
+                <div className="flex items-center justify-between gap-4">
                   <div>
-                    <p className="text-white/80 text-sm">{stat.label}</p>
-                    <p className="text-3xl font-bold text-white mt-1">{stat.value}</p>
+                    <p className="text-xs sm:text-sm text-accent-200">{stat.label}</p>
+                    <p className="text-2xl sm:text-3xl font-bold text-primary-50 mt-1">{stat.value}</p>
                   </div>
-                  <Icon className="w-12 h-12 text-white/40 opacity-70" />
+                  <Icon className="w-10 h-10 sm:w-12 sm:h-12 text-accent-200/70" />
                 </div>
               </Card>
             )
@@ -121,16 +131,19 @@ export default function AdminDashboard() {
         </div>
 
         {/* Menu */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-6 max-w-4xl">
           {menuItems.map((item, index) => {
             const Icon = item.icon
             return (
               <Link key={index} href={item.href}>
-                <Card className="p-8 hover:shadow-lg transition-shadow cursor-pointer h-full bg-white/20 backdrop-blur-md rounded-lg text-white">
-                  <Icon className="w-12 h-12 text-white mb-4 opacity-80" />
-                  <h3 className="text-2xl font-bold text-white mb-2">{item.title}</h3>
-                  <p className="text-white/80 mb-6">{item.description}</p>
-                  <Button variant="outline" className="w-full border-white/30 text-white">
+                <Card className="p-6 sm:p-7 lg:p-8 hover:shadow-xl transition-shadow cursor-pointer h-full bg-primary-900/80 border border-primary-800 rounded-2xl text-primary-50">
+                  <Icon className="w-10 h-10 sm:w-12 sm:h-12 text-accent-200 mb-4 opacity-90" />
+                  <h3 className="text-xl sm:text-2xl font-semibold text-primary-50 mb-2">{item.title}</h3>
+                  <p className="text-sm sm:text-base text-accent-100 mb-5">{item.description}</p>
+                  <Button
+                    variant="outline"
+                    className="w-full border-accent-300 text-accent-100 hover:bg-accent-300/10"
+                  >
                     Accéder
                   </Button>
                 </Card>
