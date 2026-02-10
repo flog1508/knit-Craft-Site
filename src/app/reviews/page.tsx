@@ -404,7 +404,7 @@ export default function ReviewsPage() {
                   {review.image && (
                     <div
                       className="mb-3 rounded-lg overflow-hidden bg-gray-200 max-h-80 w-full cursor-pointer"
-                      onClick={() => setLightboxSrc(review.image || '')}
+                      onClick={() => setLightboxSrc(review.image ?? '')}
                     >
                       <img
                         src={review.image}
