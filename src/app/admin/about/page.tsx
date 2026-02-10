@@ -31,6 +31,17 @@ interface AboutData {
   extendedData?: ExtendedData | null
 }
 
+const DEFAULT_FOUNDERS: Founder[] = [
+  { name: 'Fondatrice 1', role: 'Co-fondatrice & designer', description: '' },
+  { name: 'Fondatrice 2', role: 'Matières & qualité', description: '' },
+  { name: 'Fondatrice 3', role: 'Vision & durabilité', description: '' },
+]
+const DEFAULT_VALUES = [
+  { title: 'Créations uniques', description: '' },
+  { title: 'Qualité & confort', description: '' },
+  { title: 'Sur-mesure humain', description: '' },
+]
+
 export default function AdminAbout() {
   const { uploadImage, isUploading, error: uploadError } = useImageUpload()
   const [about, setAbout] = useState<AboutData | null>(null)
@@ -45,8 +56,8 @@ export default function AdminAbout() {
       heroTitle: '',
       heroSubtitle: '',
       storyContent: '',
-      founders: [] as Founder[],
-      values: [] as { title: string; description?: string }[],
+      founders: DEFAULT_FOUNDERS.map(f => ({ ...f })),
+      values: DEFAULT_VALUES.map(v => ({ ...v })),
       teamContent: '',
       backgroundImage: '',
       foundersImage: '',
@@ -61,38 +72,47 @@ export default function AdminAbout() {
     try {
       const res = await fetch('/api/admin/about')
       const data = await res.json()
-      if (data) {
+      const ext = (data && data.extendedData) ? data.extendedData : {}
+      if (data && !data.error) {
         setAbout(data)
-        // Normalize founders: accept both `bio` and `description` coming from older data
-        const ext = data.extendedData || {}
-        if (ext.founders && Array.isArray(ext.founders)) {
-          ext.founders = ext.founders.map((f: any) => ({
-            name: f.name || '',
-            role: f.role || '',
-            description: f.description ?? f.bio ?? '',
-            image: f.image || '',
-          }))
-        }
-
-        setFormData({
-          title: data.title,
-          subtitle: data.subtitle || '',
-          content: data.content,
-          image: data.image || '',
-          extendedData: {
-            heroTitle: ext.heroTitle || '',
-            heroSubtitle: ext.heroSubtitle || '',
-            storyContent: ext.storyContent || '',
-            founders: ext.founders || [],
-            values: ext.values || [],
-            teamContent: ext.teamContent || '',
-            backgroundImage: ext.backgroundImage || '',
-            foundersImage: ext.foundersImage || '',
-          },
-        })
       }
+      // Toujours construire founders et values : si la base est vide ou pas de page À propos, on affiche les blocs par défaut
+      let founders: Founder[] = []
+      if (ext.founders && Array.isArray(ext.founders) && ext.founders.length > 0) {
+        founders = ext.founders.map((f: any) => ({
+          name: f.name || '',
+          role: f.role || '',
+          description: f.description ?? f.bio ?? '',
+          image: f.image || '',
+        }))
+      } else {
+        founders = DEFAULT_FOUNDERS.map(f => ({ ...f }))
+      }
+      let values = ext.values && Array.isArray(ext.values) && ext.values.length > 0
+        ? ext.values
+        : DEFAULT_VALUES.map(v => ({ ...v }))
+      if (values.length < 3) {
+        values = [...values, ...DEFAULT_VALUES.slice(values.length, 3).map(v => ({ ...v }))]
+      }
+
+      setFormData(prev => ({
+        title: (data && !data.error && data.title) ? data.title : prev.title || '',
+        subtitle: (data && !data.error && data.subtitle) ? data.subtitle : prev.subtitle || '',
+        content: (data && !data.error && data.content) ? data.content : prev.content || '',
+        image: (data && !data.error && data.image) ? data.image : prev.image || '',
+        extendedData: {
+          heroTitle: ext.heroTitle ?? prev.extendedData?.heroTitle ?? '',
+          heroSubtitle: ext.heroSubtitle ?? prev.extendedData?.heroSubtitle ?? '',
+          storyContent: ext.storyContent ?? prev.extendedData?.storyContent ?? '',
+          founders,
+          values,
+          teamContent: ext.teamContent ?? prev.extendedData?.teamContent ?? '',
+          backgroundImage: ext.backgroundImage ?? prev.extendedData?.backgroundImage ?? '',
+          foundersImage: ext.foundersImage ?? prev.extendedData?.foundersImage ?? '',
+        },
+      }))
     } catch (error) {
-      console.error('Erreur:', error)
+      console.error('Erreur chargement À propos:', error)
     } finally {
       setLoading(false)
     }
@@ -222,7 +242,7 @@ export default function AdminAbout() {
 
         {/* Extended data editor */}
         <div className="pt-4 border-t border-white/20">
-          <h2 className="text-lg font-semibold text-white mb-3">Éléments supplémentaires (extended data)</h2>
+          <h2 className="text-lg font-semibold text-white mb-3">Contenu affiché sur la page À propos</h2>
 
           <div className="space-y-4">
             <div>
@@ -234,21 +254,32 @@ export default function AdminAbout() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2 text-white">Image des fondatrices</label>
+              <label className="block text-sm font-medium mb-2 text-white">Image des fondatrices (photo des trois ensemble)</label>
+              <p className="text-sm text-white/70 mb-2">Photo de groupe affichée sur la page À propos. Vous pouvez la retirer si vous ajoutez des photos individuelles par fondatrice ci‑dessous.</p>
               <ImageDropZone
-                label="Founders image"
+                label="Image des fondatrices"
                 preview={(formData.extendedData as any)?.foundersImage}
                 onImageSelected={(file) => handleExtendedImageUpload(file, 'foundersImage')}
                 isLoading={isUploading}
-                alternativeText="Image des fondatrices"
+                alternativeText="Déposez l'image des fondatrices"
               />
+              {(formData.extendedData as any)?.foundersImage && (
+                <button
+                  type="button"
+                  onClick={() => setFormData(prev => ({ ...prev, extendedData: { ...(prev as any).extendedData, foundersImage: '' } }))}
+                  className="mt-2 text-sm text-red-300 hover:text-red-200 underline"
+                >
+                  Retirer cette image (photo des trois ensemble)
+                </button>
+              )}
             </div>
 
             <div>
               <label className="block text-sm font-medium mb-2 text-white">Nos fondatrices</label>
+              <p className="text-sm text-white/70 mb-3">Nom, rôle et description de chaque fondatrice (texte affiché sur la page À propos).</p>
               {((formData.extendedData as any)?.founders || []).map((f: Founder, idx: number) => (
-                <div key={idx} className="mb-3 p-3 bg-white/10 rounded">
-                  <input type="text" value={f.name || ''} placeholder="Nom" onChange={(e) => {
+                <div key={idx} className="mb-4 p-4 rounded-xl border border-white/20 bg-white/10 backdrop-blur-sm">
+                  <input type="text" value={f.name || ''} placeholder="Nom de la fondatrice" onChange={(e) => {
                     const v = e.target.value
                     setFormData(prev => {
                       const ext: any = { ...(prev as any).extendedData }
@@ -256,8 +287,8 @@ export default function AdminAbout() {
                       ext.founders[idx] = { ...(ext.founders[idx] || {}), name: v }
                       return { ...prev, extendedData: ext }
                     })
-                  }} className="w-full mb-2 px-3 py-2 bg-white/20 rounded text-white" />
-                  <input type="text" value={f.role || ''} placeholder="Rôle" onChange={(e) => {
+                  }} className="w-full mb-2 px-3 py-2.5 bg-white/15 border border-white/30 rounded-lg text-white placeholder-white/50 focus:ring-2 focus:ring-white/40" />
+                  <input type="text" value={f.role || ''} placeholder="Rôle (ex : Co-fondatrice)" onChange={(e) => {
                     const v = e.target.value
                     setFormData(prev => {
                       const ext: any = { ...(prev as any).extendedData }
@@ -265,8 +296,9 @@ export default function AdminAbout() {
                       ext.founders[idx] = { ...(ext.founders[idx] || {}), role: v }
                       return { ...prev, extendedData: ext }
                     })
-                  }} className="w-full mb-2 px-3 py-2 bg-white/20 rounded text-white" />
-                  <textarea rows={3} value={f.description || ''} placeholder="Description" onChange={(e) => {
+                  }} className="w-full mb-2 px-3 py-2.5 bg-white/15 border border-white/30 rounded-lg text-white placeholder-white/50 focus:ring-2 focus:ring-white/40" />
+                  <label className="block text-sm text-white/90 mt-2 mb-1">Description (affichée sur la page À propos)</label>
+                  <textarea rows={4} value={(f.description ?? (f as any).bio ?? '') || ''} placeholder="Présentation de la fondatrice, parcours, valeurs..." onChange={(e) => {
                     const v = e.target.value
                     setFormData(prev => {
                       const ext: any = { ...(prev as any).extendedData }
@@ -274,10 +306,10 @@ export default function AdminAbout() {
                       ext.founders[idx] = { ...(ext.founders[idx] || {}), description: v }
                       return { ...prev, extendedData: ext }
                     })
-                  }} className="w-full mb-2 px-3 py-2 bg-white/20 rounded text-white" />
-                  <div className="mt-2">
-                    <label className="block text-sm text-white mb-1">Image fondatrice</label>
-                    <ImageDropZone label="Founder image" preview={f.image} onImageSelected={(file) => handleExtendedImageUpload(file, 'foundersImage', idx)} isLoading={isUploading} alternativeText="Image fondatrice" />
+                  }} className="w-full px-3 py-2.5 bg-white/15 border border-white/30 rounded-lg text-white placeholder-white/50 focus:ring-2 focus:ring-white/40 resize-y" />
+                  <div className="mt-3">
+                    <label className="block text-sm text-white/90 mb-1">Photo de la fondatrice</label>
+                    <ImageDropZone label="Photo" preview={f.image} onImageSelected={(file) => handleExtendedImageUpload(file, 'foundersImage', idx)} isLoading={isUploading} alternativeText="Image fondatrice" />
                   </div>
                   <button type="button" onClick={() => {
                     setFormData(prev => {
@@ -285,54 +317,44 @@ export default function AdminAbout() {
                       ext.founders = (ext.founders || []).filter((_: any, i: number) => i !== idx)
                       return { ...prev, extendedData: ext }
                     })
-                  }} className="mt-2 text-sm text-red-300">Supprimer</button>
+                  }} className="mt-3 text-sm text-red-300 hover:text-red-200">Supprimer cette fondatrice</button>
                 </div>
               ))}
               <button type="button" onClick={() => {
                 setFormData(prev => {
                   const ext: any = { ...(prev as any).extendedData }
                   ext.founders = ext.founders || []
-                  ext.founders.push({ name: '', role: '', bio: '', image: '' })
+                  ext.founders.push({ name: '', role: '', description: '', image: '' })
                   return { ...prev, extendedData: ext }
                 })
-              }} className="px-3 py-2 bg-white/20 rounded text-white">Ajouter une fondatrice</button>
+              }} className="px-4 py-2.5 bg-white/20 border border-white/30 rounded-lg text-white hover:bg-white/30 transition">Ajouter une fondatrice</button>
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2 text-white">Valeurs (Qualité, Authenticité, Durabilité)</label>
-              {((formData.extendedData as any)?.values || []).map((v: any, idx: number) => (
-                <div key={idx} className="mb-2 flex gap-2">
-                  <input type="text" value={v.title || ''} placeholder="Titre" onChange={(e) => {
-                    const val = e.target.value
-                    setFormData(prev => {
-                      const ext: any = { ...(prev as any).extendedData }
-                      ext.values = ext.values || []
-                      ext.values[idx] = { ...(ext.values[idx] || {}), title: val }
-                      return { ...prev, extendedData: ext }
-                    })
-                  }} className="flex-1 px-3 py-2 bg-white/20 rounded text-white" />
-                  <input type="text" value={v.description || ''} placeholder="Description" onChange={(e) => {
-                    const val = e.target.value
-                    setFormData(prev => {
-                      const ext: any = { ...(prev as any).extendedData }
-                      ext.values = ext.values || []
-                      ext.values[idx] = { ...(ext.values[idx] || {}), description: val }
-                      return { ...prev, extendedData: ext }
-                    })
-                  }} className="flex-1 px-3 py-2 bg-white/20 rounded text-white" />
-                  <button type="button" onClick={() => setFormData(prev => {
-                    const ext: any = { ...(prev as any).extendedData }
-                    ext.values = (ext.values || []).filter((_: any, i: number) => i !== idx)
-                    return { ...prev, extendedData: ext }
-                  })} className="text-red-300">Suppr</button>
+              <label className="block text-sm font-medium mb-2 text-white">Les 3 valeurs affichées sur la page (Créations uniques, Qualité & confort, Sur-mesure humain)</label>
+              <p className="text-sm text-white/70 mb-3">Modifiez le texte sous chaque titre sur la page À propos.</p>
+              {((formData.extendedData as any)?.values || []).slice(0, 3).map((v: any, idx: number) => (
+                <div key={idx} className="mb-4 p-4 rounded-xl border border-white/20 bg-white/10 backdrop-blur-sm">
+                  <span className="block text-sm font-medium text-white/90 mb-2">
+                    {v.title || (['Créations uniques', 'Qualité & confort', 'Sur-mesure humain'][idx])}
+                  </span>
+                  <textarea
+                    rows={3}
+                    value={v.description || ''}
+                    placeholder="Texte affiché sous ce titre sur la page À propos"
+                    onChange={(e) => {
+                      const val = e.target.value
+                      setFormData(prev => {
+                        const ext: any = { ...(prev as any).extendedData }
+                        ext.values = ext.values || []
+                        ext.values[idx] = { ...(ext.values[idx] || {}), title: v.title || (['Créations uniques', 'Qualité & confort', 'Sur-mesure humain'][idx]), description: val }
+                        return { ...prev, extendedData: ext }
+                      })
+                    }}
+                    className="w-full px-3 py-2.5 bg-white/15 border border-white/30 rounded-lg text-white placeholder-white/50 focus:ring-2 focus:ring-white/40"
+                  />
                 </div>
               ))}
-              <button type="button" onClick={() => setFormData(prev => {
-                const ext: any = { ...(prev as any).extendedData }
-                ext.values = ext.values || []
-                ext.values.push({ title: '', description: '' })
-                return { ...prev, extendedData: ext }
-              })} className="px-3 py-2 bg-white/20 rounded text-white">Ajouter une valeur</button>
             </div>
 
             <div>
@@ -348,7 +370,7 @@ export default function AdminAbout() {
         <button
           type="submit"
           disabled={saving}
-          className="w-full bg-blue-600/80 hover:bg-blue-700/80 text-white px-8 py-3 rounded backdrop-blur-sm disabled:opacity-50 font-medium transition"
+          className="w-full bg-primary-700/80 hover:bg-primary-800/80 text-white px-8 py-3 rounded backdrop-blur-sm disabled:opacity-50 font-medium transition"
         >
           {saving ? 'Sauvegarde...' : 'Sauvegarder les changements'}
         </button>

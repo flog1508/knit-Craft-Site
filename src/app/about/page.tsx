@@ -222,7 +222,7 @@ export default function AboutPage() {
                       {f.name}
                     </span>{' '}
                     {f.role && <>– {f.role}, </>}
-                    {f.description}
+                    {f.description ?? (f as { bio?: string }).bio}
                   </li>
                 ))}
               </ul>
