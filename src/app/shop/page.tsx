@@ -43,12 +43,14 @@ export default function ShopPage() {
   // Si l'admin essaie d'accéder directement, montrer un message
   if (session?.user && (session.user as any).role?.toUpperCase() === 'ADMIN') {
     return (
-      <div className="min-h-screen bg-gray-50 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <AlertCircle className="w-12 h-12 text-yellow-600 mx-auto mb-4" />
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">Accès non disponible</h1>
-          <p className="text-gray-600 mb-8">L&apos;admin ne peut pas acheter des produits</p>
-          <Button onClick={() => router.push('/admin')}>Aller au dashboard</Button>
+      <div className="min-h-screen bg-primary-950 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-primary-50">
+          <AlertCircle className="w-12 h-12 text-accent-300 mx-auto mb-4" />
+          <h1 className="text-3xl font-bold mb-4">Accès non disponible</h1>
+          <p className="text-accent-100 mb-8">L&apos;admin ne peut pas acheter des produits</p>
+          <Button variant="primary" onClick={() => router.push('/admin')}>
+            Aller au dashboard
+          </Button>
         </div>
       </div>
     )
@@ -63,38 +65,31 @@ export default function ShopPage() {
   const categories = ['all', ...new Set(products.map((p) => p.category))]
 
   return (
-    <div
-      className="relative min-h-screen bg-cover bg-center bg-fixed"
-      style={{
-        backgroundImage: "url('/images/cart-bg.jpeg')",
-        backgroundPosition: 'center',
-        backgroundSize: 'cover',
-      }}
-    >
-      {/* Dark overlay */}
-      <div className="absolute inset-0 bg-black/30 -z-10" />
+    <div className="relative min-h-screen bg-primary-950">
+      <div className="absolute inset-0 opacity-100 mix-blend-multiply bg-[url('/images/cart-bg.jpeg')] bg-cover bg-center" />
+      <div className="absolute inset-0 bg-primary-900/80" />
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-primary-50">
         {/* Header */}
         <div className="mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 drop-shadow-lg">Boutique</h1>
-          <p className="text-xl text-white/90 drop-shadow-md">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 drop-shadow-lg">Boutique</h1>
+          <p className="text-lg md:text-xl text-accent-100 drop-shadow-md max-w-2xl">
             Découvrez notre collection complète de créations artisanales
           </p>
         </div>
 
         {/* Filters */}
-        <div className="bg-white/20 backdrop-blur-md rounded-lg border-0 p-6 mb-8 shadow-lg">
+        <div className="bg-primary-900/70 backdrop-blur-md rounded-lg border border-primary-800 p-6 mb-8 shadow-lg">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Search */}
             <div className="relative">
-              <Search className="absolute left-3 top-3.5 w-5 h-5 text-white/60" />
+              <Search className="absolute left-3 top-3.5 w-5 h-5 text-accent-200" />
               <input
                 type="text"
                 placeholder="Rechercher un produit..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 bg-white/30 border-2 border-white/40 rounded-lg text-white placeholder-white/60 focus:outline-none focus:border-white/80 focus:bg-white/40"
+                className="w-full pl-10 pr-4 py-2.5 bg-primary-900/60 border border-primary-700 rounded-lg text-primary-50 placeholder-accent-200/70 focus:outline-none focus:border-accent-400 focus:bg-primary-900/70"
               />
             </div>
 
@@ -102,7 +97,7 @@ export default function ShopPage() {
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-4 py-2.5 bg-white/30 border-2 border-white/40 rounded-lg text-white focus:outline-none focus:border-white/80 focus:bg-white/40"
+              className="px-4 py-2.5 bg-primary-900/60 border border-primary-700 rounded-lg text-primary-50 focus:outline-none focus:border-accent-400 focus:bg-primary-900/70"
             >
               {categories.map((cat) => (
                 <option key={cat} value={cat}>
@@ -116,11 +111,11 @@ export default function ShopPage() {
         {/* Products Grid */}
         {loading ? (
           <div className="text-center py-20">
-            <p className="text-white text-lg drop-shadow-md">Chargement des produits...</p>
+            <p className="text-primary-50 text-lg drop-shadow-md">Chargement des produits...</p>
           </div>
         ) : filteredProducts.length === 0 ? (
           <div className="text-center py-20">
-            <p className="text-white text-lg drop-shadow-md">Aucun produit trouvé.</p>
+            <p className="text-primary-50 text-lg drop-shadow-md">Aucun produit trouvé.</p>
           </div>
         ) : (
           <>
@@ -132,7 +127,7 @@ export default function ShopPage() {
             <div className="mt-12 text-center">
               <Link
                 href="/bespoke"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-white/20 backdrop-blur-md hover:bg-white/30 text-white rounded-lg border border-white/30 transition font-medium"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-primary-900/70 backdrop-blur-md hover:bg-primary-800 text-primary-50 rounded-lg border border-primary-700 transition font-medium"
               >
                 ✨ Vous voulez une commande sur mesure ?
               </Link>

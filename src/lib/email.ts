@@ -15,11 +15,13 @@ function createTransporter() {
       },
     })
   }
+
+  // Fallback Gmail (par défaut dans ton projet)
   return nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASSWORD,
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_PASSWORD,
     },
   })
 }
@@ -36,10 +38,13 @@ export async function sendOrderEmail(
 ): Promise<{ ok: boolean; error?: string }> {
   try {
     const transporter = createTransporter()
-    if (!process.env.SMTP_HOST && !process.env.EMAIL_USER) {
-      console.error('❌ Email: aucun SMTP ni EMAIL_USER configuré (.env)')
-      return { ok: false, error: 'Configuration email manquante (SMTP ou EMAIL_USER)' }
+
+    // Vérifier que Gmail ou un SMTP est bien configuré
+    if (!process.env.SMTP_HOST && !process.env.GMAIL_USER) {
+      console.error('❌ Email: aucun SMTP ni GMAIL_USER configuré (.env)')
+      return { ok: false, error: 'Configuration email manquante (SMTP ou GMAIL_USER)' }
     }
+
     try {
       await transporter.verify()
     } catch (verifyErr: any) {
@@ -49,14 +54,15 @@ export async function sendOrderEmail(
     }
 
     const products = orderData.products || []
-    const productList = products
-      .map(p => `- ${p.name} x${p.quantity}: ${p.price}€`)
-      .join('\n')
+    const productList = products.map(p => `- ${p.name} x${p.quantity}: ${p.price}€`).join('\n')
 
     const firstName = orderData.clientName.split(' ')[0]
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || ''
-    const siteName = /localhost|127\.0\.0\.1|:3000/i.test(appUrl) ? 'Knit & Craft' : (appUrl.replace(/^https?:\/\//, '').replace(/\/$/, '') || 'Knit & Craft')
+    const siteName = /localhost|127\.0\.0\.1|:3000/i.test(appUrl)
+      ? 'Knit & Craft'
+      : appUrl.replace(/^https?:\/\//, '').replace(/\/$/, '') || 'Knit & Craft'
+
     const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2>Bonjour ${firstName},</h2>
@@ -67,7 +73,12 @@ export async function sendOrderEmail(
         <h4>Produits :</h4>
         <div style="background: #f5f5f5; padding: 15px; border-radius: 5px;">
           ${products
-            .map(p => `<p style="margin: 5px 0;">• ${p.name} (x${p.quantity}) — ${(p.price * p.quantity).toFixed(2)}€</p>`)
+            .map(
+              p =>
+                `<p style="margin: 5px 0;">• ${p.name} (x${p.quantity}) — ${(p.price * p.quantity).toFixed(
+                  2
+                )}€</p>`
+            )
             .join('')}
         </div>
         
@@ -105,7 +116,9 @@ Votre commande sera traitée dès que possible.
 ${siteName}`
 
     await transporter.sendMail({
-      from: process.env.EMAIL_FROM || `Knit & Craft <${process.env.EMAIL_USER || process.env.SMTP_USER}>`,
+      from:
+        process.env.EMAIL_FROM ||
+        `Knit & Craft <${process.env.GMAIL_USER || process.env.SMTP_USER || ''}>`,
       to,
       subject: `Confirmation de commande #${orderData.orderNumber}`,
       html,
@@ -136,9 +149,7 @@ export async function sendAdminNotification(
     const transporter = createTransporter()
 
     const products = orderData.products || []
-    const productList = products
-      .map(p => `- ${p.name} x${p.quantity}`)
-      .join('\n')
+    const productList = products.map(p => `- ${p.name} x${p.quantity}`).join('\n')
 
     const html = `
       <h2>🚨 Nouvelle Commande #${orderData.orderNumber}</h2>
@@ -153,9 +164,14 @@ export async function sendAdminNotification(
       <h3>Total: ${orderData.totalPrice}$</h3>
     `
 
-    const adminEmail = process.env.ADMIN_EMAIL || process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'knitandcraft3@gmail.com'
+    const adminEmail =
+      process.env.ADMIN_EMAIL ||
+      process.env.NEXT_PUBLIC_CONTACT_EMAIL ||
+      process.env.GMAIL_USER ||
+      'knitandcraft3@gmail.com'
+
     await transporter.sendMail({
-      from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+      from: process.env.EMAIL_FROM || process.env.GMAIL_USER || process.env.SMTP_USER,
       to: adminEmail,
       subject: `🛍️ Nouvelle commande #${orderData.orderNumber}`,
       html,
@@ -168,3 +184,4 @@ export async function sendAdminNotification(
     return false
   }
 }
+

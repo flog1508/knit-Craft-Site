@@ -24,7 +24,10 @@ export async function GET(request: NextRequest) {
       }),
     ])
 
-    const totalRevenue = allOrders.reduce((sum, order) => sum + order.totalPrice, 0)
+    const totalRevenue = allOrders.reduce(
+      (sum: number, order: { totalPrice: number }) => sum + order.totalPrice,
+      0
+    )
 
     return NextResponse.json({
       success: true,

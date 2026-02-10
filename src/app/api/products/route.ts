@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
     ])
 
     // Map Prisma model basePrice -> price for frontend consistency and normalize image paths
-    const products = rawProducts.map((p) => {
+    const products = rawProducts.map((p: any) => {
       const mapped: any = {
         ...p,
         price: (p as any).basePrice,

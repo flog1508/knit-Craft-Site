@@ -217,26 +217,34 @@ export default function ReviewsPage() {
   }
 
   if (loading) {
-    return <div className="p-8 text-center">Chargement...</div>
+    return (
+      <div className="min-h-screen bg-primary-950 flex items-center justify-center text-primary-50">
+        Chargement...
+      </div>
+    )
   }
 
   return (
-    <div
-      className="min-h-screen py-8 sm:py-12 bg-cover bg-center"
-      style={{ backgroundImage: "url('/images/newsletter.jpg')" }}
-    >
-      <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-3 sm:mb-4">Témoignages Clients</h1>
-        <p className="text-base sm:text-lg md:text-xl text-white mb-2 sm:mb-4">
+    <div className="min-h-screen py-8 sm:py-12 bg-primary-950 relative">
+      <div className="absolute inset-0 opacity-100 mix-blend-multiply bg-[url('/images/newsletter.jpg')] bg-cover bg-center" />
+      <div className="absolute inset-0 bg-primary-900/80" />
+
+      <div className="relative max-w-4xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary-50 mb-3 sm:mb-4">
+          Témoignages Clients
+        </h1>
+        <p className="text-base sm:text-lg md:text-xl text-accent-100 mb-2 sm:mb-4">
           Les avis de nos clients satisfaits
         </p>
         {totalReviews !== null && (
-          <p className="text-sm text-white/90 mb-8">{totalReviews} avis publiés</p>
+          <p className="text-sm text-accent-100/90 mb-8">{totalReviews} avis publiés</p>
         )}
 
         {/* Form Ajouter un avis */}
-        <Card className="mb-6 sm:mb-8 p-3 sm:p-6 md:p-8 bg-white/15 backdrop-blur-xl border border-white/30 shadow-lg">
-          <h2 className="text-lg sm:text-2xl font-bold text-white mb-3 sm:mb-6">Donner votre avis</h2>
+        <Card className="mb-6 sm:mb-8 p-3 sm:p-6 md:p-8 bg-primary-900/70 backdrop-blur-xl border border-primary-800 shadow-lg">
+          <h2 className="text-lg sm:text-2xl font-bold text-primary-50 mb-3 sm:mb-6">
+            Donner votre avis
+          </h2>
           <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
               <Input
@@ -245,7 +253,7 @@ export default function ReviewsPage() {
                 value={formData.name}
                 onChange={handleChange}
                 required
-                className="bg-white/15 border-white/30 text-white placeholder:text-white/50 focus:ring-white/40 focus:border-white/50"
+                className="bg-transparent border-primary-700 text-white placeholder:text-white/50"
               />
               <Input
                 label="Votre email"
@@ -254,19 +262,19 @@ export default function ReviewsPage() {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="bg-white/15 border-white/30 text-white placeholder:text-white/50 focus:ring-white/40 focus:border-white/50"
+                className="bg-transparent border-primary-700 text-white placeholder:text-white/50"
               />
             </div>
 
             <div>
-              <label className="block text-xs sm:text-sm font-medium text-white mb-2">
+              <label className="block text-xs sm:text-sm font-medium text-primary-50 mb-2">
                 Note
               </label>
               <select
                 name="rating"
                 value={formData.rating}
                 onChange={handleChange}
-                className="w-full px-3 sm:px-4 py-2.5 text-sm bg-white/15 border-2 border-white/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-white/50 text-white appearance-none cursor-pointer [&>option]:bg-gray-800 [&>option]:text-white"
+                className="w-full px-3 sm:px-4 py-2.5 text-sm bg-transparent border-2 border-primary-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-400/40 focus:border-accent-400 text-primary-50 appearance-none cursor-pointer [&>option]:bg-primary-900 [&>option]:text-primary-50"
               >
                 {[1, 2, 3, 4, 5].map(n => (
                   <option key={n} value={n}>{n} étoile{n > 1 ? 's' : ''}</option>
@@ -275,7 +283,7 @@ export default function ReviewsPage() {
             </div>
 
             <div>
-              <label className="block text-xs sm:text-sm font-medium text-white mb-2">
+              <label className="block text-xs sm:text-sm font-medium text-primary-50 mb-2">
                 Votre commentaire
               </label>
               <textarea
@@ -284,14 +292,14 @@ export default function ReviewsPage() {
                 onChange={handleChange}
                 rows={3}
                 placeholder="Partagez votre expérience..."
-                className="w-full px-3 sm:px-4 py-2.5 text-sm bg-white/15 border-2 border-white/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-white/50 text-white placeholder:text-white/50"
+                className="w-full px-3 sm:px-4 py-2.5 text-sm bg-transparent border-2 border-primary-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-400/40 focus:border-accent-400 text-primary-50 placeholder:text-primary-100/60"
                 required
               />
             </div>
 
             {/* Image Upload */}
             <div>
-              <label className="block text-sm font-medium text-white mb-2">
+              <label className="block text-sm font-medium text-primary-50 mb-2">
                 <ImageIcon className="w-4 h-4 inline mr-2" />
                 Ajouter une image (optionnel)
               </label>
@@ -304,18 +312,21 @@ export default function ReviewsPage() {
                   disabled={uploading}
                   className="hidden"
                 />
-                <label htmlFor="review-image-input" className="cursor-pointer px-4 py-2 bg-white/20 border-2 border-white/30 rounded-lg text-sm text-white hover:bg-white/30 transition">
+                <label
+                  htmlFor="review-image-input"
+                  className="cursor-pointer px-4 py-2 bg-primary-900/70 border-2 border-primary-700 rounded-lg text-sm text-primary-50 hover:bg-primary-800 transition"
+                >
                   Choisir une image
                 </label>
                 {imageName && (
-                  <span className="text-sm text-white/80">{imageName}</span>
+                  <span className="text-sm text-primary-100">{imageName}</span>
                 )}
                 {imagePreview && (
                   <div className="ml-auto flex items-center gap-2">
                     <button
                       type="button"
                       onClick={removeImage}
-                      className="p-2 text-red-300 hover:bg-white/20 rounded-lg transition"
+                      className="p-2 text-red-300 hover:bg-primary-900/60 rounded-lg transition"
                     >
                       <X className="w-5 h-5" />
                     </button>
@@ -348,14 +359,17 @@ export default function ReviewsPage() {
         </Card>
 
         {reviews.length === 0 ? (
-          <Card className="p-8 text-center bg-white/15 backdrop-blur-xl border border-white/30">
-            <p className="text-white/90">Aucun avis pour le moment</p>
+        <Card className="p-8 text-center bg-primary-900/70 backdrop-blur-xl border border-primary-800">
+            <p className="text-primary-50">Aucun avis pour le moment</p>
           </Card>
         ) : (
           <div className="flex justify-center">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 w-full max-w-4xl">
               {reviews.map((review) => (
-                <Card key={review.id} className="overflow-hidden bg-white/20 backdrop-blur-sm border-0 shadow-md hover:shadow-lg transition-shadow">
+                <Card
+                  key={review.id}
+                  className="overflow-hidden bg-primary-50/95 backdrop-blur-sm border-0 shadow-md hover:shadow-lg transition-shadow"
+                >
                 {/* Post Header */}
                 <div className="p-3 sm:p-4 border-b border-gray-300/30">
                   <div className="flex items-start justify-between mb-2">
@@ -382,14 +396,19 @@ export default function ReviewsPage() {
 
                 {/* Post Content */}
                 <div className="p-3 sm:p-4">
-                  <p className="text-gray-800 text-xs sm:text-sm mb-3 leading-relaxed">{review.comment}</p>
+                  <p className="text-gray-800 text-xs sm:text-sm mb-3 leading-relaxed">
+                    {review.comment}
+                  </p>
 
                   {/* Image */}
                   {review.image && (
-                    <div className="mb-3 rounded-lg overflow-hidden bg-gray-200 max-h-80 w-full cursor-pointer" onClick={() => setLightboxSrc(review.image)}>
-                      <img 
-                        src={review.image} 
-                        alt="Avis image" 
+                    <div
+                      className="mb-3 rounded-lg overflow-hidden bg-gray-200 max-h-80 w-full cursor-pointer"
+                      onClick={() => setLightboxSrc(review.image || '')}
+                    >
+                      <img
+                        src={review.image}
+                        alt="Avis image"
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -403,7 +422,9 @@ export default function ReviewsPage() {
                     onClick={() => handleHelpful(review.id)}
                     disabled={!!helpfulDisabled[review.id]}
                     aria-disabled={!!helpfulDisabled[review.id]}
-                    className={`flex items-center gap-2 text-xs text-gray-700 transition-colors ${helpfulDisabled[review.id] ? 'opacity-50 cursor-not-allowed' : 'hover:text-primary-600'}`}
+                    className={`flex items-center gap-2 text-xs text-gray-700 transition-colors ${
+                      helpfulDisabled[review.id] ? 'opacity-50 cursor-not-allowed' : 'hover:text-primary-600'
+                    }`}
                   >
                     <ThumbsUp className="w-3 h-3" />
                     Utile ({(review as any).helpful || 0})

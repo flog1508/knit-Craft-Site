@@ -1,12 +1,12 @@
 'use client'
 
-import React from 'react'
+import React, { Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button, Card } from '@/components/ui'
 import Link from 'next/link'
 import { AlertCircle } from 'lucide-react'
 
-export default function ErrorPage() {
+function ErrorContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const error = searchParams.get('error')
@@ -49,5 +49,13 @@ export default function ErrorPage() {
         </div>
       </Card>
     </div>
+  )
+}
+
+export default function ErrorPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Chargement...</div>}>
+      <ErrorContent />
+    </Suspense>
   )
 }

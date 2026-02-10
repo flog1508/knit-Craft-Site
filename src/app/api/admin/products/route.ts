@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
       prisma.product.count(),
     ])
 
-    const products = rawProducts.map((p) => ({
+    const products = rawProducts.map((p: any) => ({
       ...p,
       price: (p as any).basePrice,
       image: (p as any).image ? getImageUrl((p as any).image) : '/images/newsletter.jpg',

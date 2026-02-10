@@ -14,6 +14,9 @@ export type Product = {
   category: string
   tags: string[]
   isCustomizable: boolean
+  // Délais de livraison estimés (optionnels, suivant le schéma DB)
+  deliveryDaysMin?: number
+  deliveryDaysMax?: number
   createdAt: Date
   updatedAt: Date
 }

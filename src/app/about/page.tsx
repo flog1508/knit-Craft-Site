@@ -65,7 +65,7 @@ export default function AboutPage() {
   const foundersImage = ext.foundersImage || '/images/WhatsApp Image 2026-02-03 at 15.57.52.jpeg'
 
   return (
-    <div className="relative">
+    <div className="relative min-h-screen bg-primary-950">
       {/* Video/Image Background */}
       {backgroundVideo && !backgroundImage && (
         <video
@@ -73,29 +73,29 @@ export default function AboutPage() {
           muted
           loop
           playsInline
-          className="absolute top-0 left-0 w-full h-full object-cover -z-10"
-          style={{ filter: 'brightness(0.3)' }}
+          className="absolute top-0 left-0 w-full h-full object-cover -z-10 opacity-100 mix-blend-multiply"
         >
           <source src={backgroundVideo} type="video/mp4" />
         </video>
       )}
       {backgroundImage && (
         <div
-          className="absolute top-0 left-0 w-full h-full -z-10 bg-cover bg-center"
-          style={{ backgroundImage: `url(${backgroundImage})`, filter: 'brightness(0.3)' }}
+          className="absolute top-0 left-0 w-full h-full -z-10 bg-cover bg-center opacity-100 mix-blend-multiply"
+          style={{ backgroundImage: `url(${backgroundImage})` }}
         />
       )}
       {!backgroundVideo && !backgroundImage && (
-        <div className="absolute top-0 left-0 w-full h-full -z-10 bg-gray-800" />
+        <div className="absolute top-0 left-0 w-full h-full -z-10 bg-primary-900" />
       )}
+      <div className="absolute inset-0 bg-primary-900/80 -z-0" />
 
       {/* Hero Section */}
       <section className="relative py-12 sm:py-16 md:py-24 lg:py-32">
         <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 text-center">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-3 sm:mb-4 md:mb-6 drop-shadow-lg">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-primary-50 mb-3 sm:mb-4 md:mb-6 drop-shadow-lg">
             {heroTitle}
           </h1>
-          <p className="text-sm sm:text-base md:text-lg lg:text-xl text-white drop-shadow-md">
+          <p className="text-sm sm:text-base md:text-lg lg:text-xl text-accent-100 drop-shadow-md">
             {heroSubtitle}
           </p>
         </div>
@@ -104,33 +104,44 @@ export default function AboutPage() {
       {/* Story Section */}
       <section className="relative py-8 sm:py-12 md:py-16 lg:py-24">
         <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-          <Card className="mb-8 sm:mb-10 md:mb-12 p-4 sm:p-6 md:p-8 bg-white/20 backdrop-blur-md border-0 shadow-lg">
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-3 sm:mb-4">Notre Histoire</h2>
-            <div className="text-white/90 leading-relaxed whitespace-pre-line">{storyContent}</div>
+          <Card className="mb-8 sm:mb-10 md:mb-12 p-4 sm:p-6 md:p-8 bg-primary-900/70 backdrop-blur-md border border-primary-800 shadow-lg text-primary-50">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4">
+              Notre Histoire
+            </h2>
+            <div className="text-accent-100 leading-relaxed whitespace-pre-line">{storyContent}</div>
           </Card>
 
           {/* Values */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-10 md:mb-12">
             {values.map((value, index) => (
-              <Card key={index} className="p-4 sm:p-6 bg-white/20 backdrop-blur-md border-0 shadow-lg">
-                <h3 className="text-lg sm:text-xl font-bold text-white mb-2">{value.title}</h3>
-                <p className="text-xs sm:text-sm md:text-base text-white/90">{value.description}</p>
+              <Card
+                key={index}
+                className="p-4 sm:p-6 bg-primary-900/70 backdrop-blur-md border border-primary-800 shadow-lg text-primary-50"
+              >
+                <h3 className="text-lg sm:text-xl font-bold mb-2 text-accent-200">{value.title}</h3>
+                <p className="text-xs sm:text-sm md:text-base text-accent-100">{value.description}</p>
               </Card>
             ))}
           </div>
 
           {/* Founders */}
           <div>
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-6 sm:mb-8 text-center drop-shadow-lg">Nos Fondatrices</h2>
-            <Card className="mb-8 sm:mb-12 bg-white/20 backdrop-blur-md border-0 shadow-lg overflow-hidden">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-primary-50 mb-6 sm:mb-8 text-center drop-shadow-lg">
+              Nos Fondatrices
+            </h2>
+            <Card className="mb-8 sm:mb-12 bg-primary-900/70 backdrop-blur-md border border-primary-800 shadow-lg overflow-hidden text-primary-50">
               <img src={foundersImage} alt="Nos Fondatrices" className="w-full h-auto object-cover" />
               <div className="p-4 sm:p-6 md:p-8">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {founders.map((founder, index) => (
                     <div key={index} className="text-center">
-                      <h3 className="text-base sm:text-lg md:text-xl font-bold text-white mb-2">{founder.name}</h3>
-                      <p className="text-xs sm:text-sm text-white/80 mb-2">{founder.role}</p>
-                      <p className="text-white/90 text-xs sm:text-sm">{(founder as any).description ?? (founder as any).bio ?? ''}</p>
+                      <h3 className="text-base sm:text-lg md:text-xl font-bold mb-2">
+                        {founder.name}
+                      </h3>
+                      <p className="text-xs sm:text-sm text-accent-100 mb-2">{founder.role}</p>
+                      <p className="text-accent-100 text-xs sm:text-sm">
+                        {(founder as any).description ?? (founder as any).bio ?? ''}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -139,9 +150,11 @@ export default function AboutPage() {
           </div>
 
           {/* Team */}
-          <Card className="p-4 sm:p-6 md:p-8 bg-white/20 backdrop-blur-md border-0 shadow-lg">
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-3 sm:mb-4">Notre Équipe</h2>
-            <p className="text-xs sm:text-sm md:text-base text-white/90 leading-relaxed whitespace-pre-line">{teamContent}</p>
+          <Card className="p-4 sm:p-6 md:p-8 bg-primary-900/70 backdrop-blur-md border border-primary-800 shadow-lg text-primary-50">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4">Notre Équipe</h2>
+            <p className="text-xs sm:text-sm md:text-base text-accent-100 leading-relaxed whitespace-pre-line">
+              {teamContent}
+            </p>
           </Card>
         </div>
       </section>
