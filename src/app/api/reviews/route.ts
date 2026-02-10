@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { put, get } from '@vercel/blob'
+import { put, list } from '@vercel/blob'
 
 const BLOB_NAME = 'reviews.json'
 
@@ -13,12 +13,10 @@ interface Review {
 
 async function readReviewsFromBlob(): Promise<Review[]> {
   try {
-    const blob = await get(BLOB_NAME)
-    if (!blob || !blob.url) {
-      return []
-    }
+    const { blobs } = await list({ prefix: BLOB_NAME, limit: 1 })
+    if (!blobs || blobs.length === 0) return []
 
-    const res = await fetch(blob.url)
+    const res = await fetch(blobs[0].url)
     if (!res.ok) return []
 
     const data = (await res.json()) as Review[] | undefined
