@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer'
+import { formatPrice } from './utils'
 
 // Configuration SMTP ou Gmail
 function createTransporter() {
@@ -62,7 +63,7 @@ export async function sendOrderEmail(
     }
 
     const products = orderData.products || []
-    const productList = products.map(p => `- ${p.name} x${p.quantity}: ${p.price}€`).join('\n')
+    const productList = products.map(p => `- ${p.name} x${p.quantity}: ${formatPrice(p.price * p.quantity)}`).join('\n')
 
     const firstName = orderData.clientName.split(' ')[0]
 
@@ -83,14 +84,12 @@ export async function sendOrderEmail(
           ${products
             .map(
               p =>
-                `<p style="margin: 5px 0;">• ${p.name} (x${p.quantity}) — ${(p.price * p.quantity).toFixed(
-                  2
-                )}€</p>`
+                `<p style="margin: 5px 0;">• ${p.name} (x${p.quantity}) — ${formatPrice(p.price * p.quantity)}</p>`
             )
             .join('')}
         </div>
         
-        <h3 style="color: #2c3e50; margin-top: 20px;">Total : ${orderData.totalPrice}€</h3>
+        <h3 style="color: #2c3e50; margin-top: 20px;">Total : ${formatPrice(orderData.totalPrice)}</h3>
         
         ${
           orderData.deliveryDays
@@ -114,7 +113,7 @@ Commande #${orderData.orderNumber}
 Produits :
 ${productList}
 
-Total : ${orderData.totalPrice}€
+Total : ${formatPrice(orderData.totalPrice)}
 
 ${orderData.deliveryDays
   ? `Délai estimé : ${orderData.deliveryDays.min} à ${orderData.deliveryDays.max} jours.`
@@ -169,7 +168,7 @@ export async function sendAdminNotification(
       <h3>Produits:</h3>
       <pre>${productList}</pre>
       
-      <h3>Total: ${orderData.totalPrice}$</h3>
+      <h3>Total: ${formatPrice(orderData.totalPrice)}</h3>
     `
 
     const adminEmail =
@@ -274,7 +273,7 @@ export async function sendBespokeClientEmail(payload: {
         <div style="background:#f5f5f5;padding:14px;border-radius:8px;">
           <p><strong>Description :</strong><br/>${payload.description}</p>
           <p><strong>Exigences :</strong><br/>${payload.requirements}</p>
-          <p><strong>Budget :</strong> ${payload.budget ? payload.budget + '€' : 'Non spécifié'}</p>
+          <p><strong>Budget :</strong> ${payload.budget ? formatPrice(payload.budget) : 'Non spécifié'}</p>
           <p><strong>Délai :</strong> ${payload.deadline || 'Non spécifié'}</p>
         </div>
         <p style="margin-top:18px;">Nous vous recontacterons dès que possible.</p>
@@ -323,7 +322,7 @@ export async function sendBespokeAdminEmail(payload: {
       <p><strong>Email client:</strong> ${payload.email}</p>
       <p><strong>Description:</strong><br/>${payload.description}</p>
       <p><strong>Exigences:</strong><br/>${payload.requirements}</p>
-      <p><strong>Budget:</strong> ${payload.budget ? payload.budget + '€' : 'Non spécifié'}</p>
+      <p><strong>Budget:</strong> ${payload.budget ? formatPrice(payload.budget) : 'Non spécifié'}</p>
       <p><strong>Délai:</strong> ${payload.deadline || 'Non spécifié'}</p>
     `
 

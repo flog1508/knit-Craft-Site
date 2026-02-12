@@ -26,10 +26,9 @@ export default function ProductPage() {
   const [variants, setVariants] = useState<any[]>([])
 
   // Chargement du produit pour le slug courant
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchProduct()
-  }, [slug])
+  }, [slug]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchProduct = async () => {
     try {

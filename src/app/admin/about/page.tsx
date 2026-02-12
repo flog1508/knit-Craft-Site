@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useImageUpload } from '@/hooks'
 import { ImageDropZone } from '@/components/ImageDropZone'
+import { FileText } from 'lucide-react'
 
 interface Founder {
   name: string
@@ -190,40 +191,49 @@ export default function AdminAbout() {
     }
   }
 
-  if (loading) return <div className="p-8 text-white">Chargement...</div>
+  if (loading) return <div className="p-8 text-accent-100">Chargement...</div>
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8 text-white">Éditer &quot;À propos&quot;</h1>
-
-      <form onSubmit={handleSubmit} className="space-y-6 bg-white/10 backdrop-blur-md rounded-lg p-8">
+    <div className="py-10 sm:py-12 max-w-4xl mx-auto space-y-10">
+      <div className="flex items-center gap-3">
+        <div className="w-12 h-12 rounded-xl bg-accent-400/20 flex items-center justify-center shrink-0">
+          <FileText className="w-6 h-6 text-accent-300" aria-hidden="true" />
+        </div>
         <div>
-          <label className="block text-sm font-medium mb-2 text-white">Titre</label>
+          <p className="uppercase tracking-[0.25em] text-accent-200 text-xs sm:text-sm mb-1">Contenu du site</p>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary-50">Éditer &quot;À propos&quot;</h1>
+          <p className="text-accent-100 text-sm mt-1">Modifiez la présentation, l&apos;histoire et les fondatrices.</p>
+        </div>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-6 bg-primary-900/70 border border-primary-800 rounded-2xl p-6 lg:p-8 shadow-lg shadow-primary-900/40">
+        <div>
+          <label className="block text-sm font-medium mb-2 text-accent-200">Titre</label>
           <input
             type="text"
             name="title"
             value={formData.title}
             onChange={handleInputChange}
-            className="w-full px-4 py-2 bg-white/20 border border-white/30 rounded text-white placeholder-white/50 focus:outline-none focus:border-white/60"
+            className="w-full px-4 py-2 bg-primary-900/50 border border-primary-800 rounded-lg text-primary-50 placeholder-accent-100/50 focus:outline-none focus:border-accent-300 focus:ring-accent-300/20"
             placeholder="Titre principal"
             required
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2 text-white">Sous-titre</label>
+          <label className="block text-sm font-medium mb-2 text-accent-200">Sous-titre</label>
           <input
             type="text"
             name="subtitle"
             value={formData.subtitle}
             onChange={handleInputChange}
-            className="w-full px-4 py-2 bg-white/20 border border-white/30 rounded text-white placeholder-white/50 focus:outline-none focus:border-white/60"
+            className="w-full px-4 py-2 bg-primary-900/50 border border-primary-800 rounded-lg text-primary-50 placeholder-accent-100/50 focus:outline-none focus:border-accent-300 focus:ring-accent-300/20"
             placeholder="Sous-titre (optionnel)"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2 text-white">Image de fond principale</label>
+          <label className="block text-sm font-medium mb-2 text-accent-200">Image de fond principale</label>
           <ImageDropZone
             label="Image de fond"
             preview={formData.image}
@@ -241,21 +251,21 @@ export default function AdminAbout() {
         {/* The main story is editable below as 'Notre histoire' — content field hidden to simplify UI */}
 
         {/* Extended data editor */}
-        <div className="pt-4 border-t border-white/20">
-          <h2 className="text-lg font-semibold text-white mb-3">Contenu affiché sur la page À propos</h2>
+        <div className="pt-6 border-t border-primary-800">
+          <h2 className="text-lg font-semibold text-primary-50 mb-3">Contenu affiché sur la page À propos</h2>
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-2 text-white">Notre histoire</label>
+              <label className="block text-sm font-medium mb-2 text-accent-200">Notre histoire</label>
               <textarea rows={6} value={(formData.extendedData as any)?.storyContent || ''} onChange={(e) => {
                 const v = e.target.value
                 setFormData(prev => ({ ...prev, extendedData: { ...(prev as any).extendedData, storyContent: v } }))
-              }} className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded text-white" />
+              }} className="w-full px-4 py-2 bg-primary-900/50 border border-primary-800 rounded-lg text-primary-50 placeholder-accent-100/50 focus:border-accent-300" />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2 text-white">Image des fondatrices (photo des trois ensemble)</label>
-              <p className="text-sm text-white/70 mb-2">Photo de groupe affichée sur la page À propos. Vous pouvez la retirer si vous ajoutez des photos individuelles par fondatrice ci‑dessous.</p>
+              <label className="block text-sm font-medium mb-2 text-accent-200">Image des fondatrices (photo des trois ensemble)</label>
+              <p className="text-sm text-accent-100 mb-2">Photo de groupe affichée sur la page À propos. Vous pouvez la retirer si vous ajoutez des photos individuelles par fondatrice ci‑dessous.</p>
               <ImageDropZone
                 label="Image des fondatrices"
                 preview={(formData.extendedData as any)?.foundersImage}
@@ -275,10 +285,10 @@ export default function AdminAbout() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2 text-white">Nos fondatrices</label>
-              <p className="text-sm text-white/70 mb-3">Nom, rôle et description de chaque fondatrice (texte affiché sur la page À propos).</p>
+              <label className="block text-sm font-medium mb-2 text-accent-200">Nos fondatrices</label>
+              <p className="text-sm text-accent-100 mb-3">Nom, rôle et description de chaque fondatrice (texte affiché sur la page À propos).</p>
               {((formData.extendedData as any)?.founders || []).map((f: Founder, idx: number) => (
-                <div key={idx} className="mb-4 p-4 rounded-xl border border-white/20 bg-white/10 backdrop-blur-sm">
+                <div key={idx} className="mb-4 p-4 rounded-xl border border-primary-800 bg-primary-800/50">
                   <input type="text" value={f.name || ''} placeholder="Nom de la fondatrice" onChange={(e) => {
                     const v = e.target.value
                     setFormData(prev => {
@@ -287,7 +297,7 @@ export default function AdminAbout() {
                       ext.founders[idx] = { ...(ext.founders[idx] || {}), name: v }
                       return { ...prev, extendedData: ext }
                     })
-                  }} className="w-full mb-2 px-3 py-2.5 bg-white/15 border border-white/30 rounded-lg text-white placeholder-white/50 focus:ring-2 focus:ring-white/40" />
+                  }} className="w-full mb-2 px-3 py-2.5 bg-primary-900/50 border border-primary-800 rounded-lg text-primary-50 placeholder-accent-100/50 focus:border-accent-300 focus:ring-accent-300/20" />
                   <input type="text" value={f.role || ''} placeholder="Rôle (ex : Co-fondatrice)" onChange={(e) => {
                     const v = e.target.value
                     setFormData(prev => {
@@ -296,8 +306,8 @@ export default function AdminAbout() {
                       ext.founders[idx] = { ...(ext.founders[idx] || {}), role: v }
                       return { ...prev, extendedData: ext }
                     })
-                  }} className="w-full mb-2 px-3 py-2.5 bg-white/15 border border-white/30 rounded-lg text-white placeholder-white/50 focus:ring-2 focus:ring-white/40" />
-                  <label className="block text-sm text-white/90 mt-2 mb-1">Description (affichée sur la page À propos)</label>
+                  }} className="w-full mb-2 px-3 py-2.5 bg-primary-900/50 border border-primary-800 rounded-lg text-primary-50 placeholder-accent-100/50 focus:border-accent-300 focus:ring-accent-300/20" />
+                  <label className="block text-sm text-primary-50/90 mt-2 mb-1">Description (affichée sur la page À propos)</label>
                   <textarea rows={4} value={(f.description ?? (f as any).bio ?? '') || ''} placeholder="Présentation de la fondatrice, parcours, valeurs..." onChange={(e) => {
                     const v = e.target.value
                     setFormData(prev => {
@@ -306,9 +316,9 @@ export default function AdminAbout() {
                       ext.founders[idx] = { ...(ext.founders[idx] || {}), description: v }
                       return { ...prev, extendedData: ext }
                     })
-                  }} className="w-full px-3 py-2.5 bg-white/15 border border-white/30 rounded-lg text-white placeholder-white/50 focus:ring-2 focus:ring-white/40 resize-y" />
+                  }} className="w-full px-3 py-2.5 bg-primary-900/50 border border-primary-800 rounded-lg text-primary-50 placeholder-accent-100/50 focus:border-accent-300 focus:ring-accent-300/20 resize-y" />
                   <div className="mt-3">
-                    <label className="block text-sm text-white/90 mb-1">Photo de la fondatrice</label>
+                    <label className="block text-sm text-primary-50/90 mb-1">Photo de la fondatrice</label>
                     <ImageDropZone label="Photo" preview={f.image} onImageSelected={(file) => handleExtendedImageUpload(file, 'foundersImage', idx)} isLoading={isUploading} alternativeText="Image fondatrice" />
                   </div>
                   <button type="button" onClick={() => {
@@ -327,15 +337,15 @@ export default function AdminAbout() {
                   ext.founders.push({ name: '', role: '', description: '', image: '' })
                   return { ...prev, extendedData: ext }
                 })
-              }} className="px-4 py-2.5 bg-white/20 border border-white/30 rounded-lg text-white hover:bg-white/30 transition">Ajouter une fondatrice</button>
+              }} className="px-4 py-2.5 bg-primary-800/50 border border-primary-700 rounded-lg text-primary-50 hover:bg-primary-800 transition">Ajouter une fondatrice</button>
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2 text-white">Les 3 valeurs affichées sur la page (Créations uniques, Qualité & confort, Sur-mesure humain)</label>
-              <p className="text-sm text-white/70 mb-3">Modifiez le texte sous chaque titre sur la page À propos.</p>
+              <label className="block text-sm font-medium mb-2 text-primary-50">Les 3 valeurs affichées sur la page (Créations uniques, Qualité & confort, Sur-mesure humain)</label>
+              <p className="text-sm text-primary-50/70 mb-3">Modifiez le texte sous chaque titre sur la page À propos.</p>
               {((formData.extendedData as any)?.values || []).slice(0, 3).map((v: any, idx: number) => (
-                <div key={idx} className="mb-4 p-4 rounded-xl border border-white/20 bg-white/10 backdrop-blur-sm">
-                  <span className="block text-sm font-medium text-white/90 mb-2">
+                <div key={idx} className="mb-4 p-4 rounded-xl border border-primary-800 bg-primary-800/50">
+                  <span className="block text-sm font-medium text-primary-50/90 mb-2">
                     {v.title || (['Créations uniques', 'Qualité & confort', 'Sur-mesure humain'][idx])}
                   </span>
                   <textarea
@@ -351,18 +361,18 @@ export default function AdminAbout() {
                         return { ...prev, extendedData: ext }
                       })
                     }}
-                    className="w-full px-3 py-2.5 bg-white/15 border border-white/30 rounded-lg text-white placeholder-white/50 focus:ring-2 focus:ring-white/40"
+                    className="w-full px-3 py-2.5 bg-primary-900/50 border border-primary-800 rounded-lg text-primary-50 placeholder-accent-100/50 focus:border-accent-300 focus:ring-accent-300/20"
                   />
                 </div>
               ))}
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2 text-white">Notre équipe</label>
+              <label className="block text-sm font-medium mb-2 text-primary-50">Notre équipe</label>
               <textarea rows={4} value={(formData.extendedData as any)?.teamContent || ''} onChange={(e) => {
                 const v = e.target.value
                 setFormData(prev => ({ ...prev, extendedData: { ...(prev as any).extendedData, teamContent: v } }))
-              }} className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded text-white" />
+              }} className="w-full px-4 py-2 bg-primary-900/50 border border-primary-800 rounded-lg text-primary-50 focus:border-accent-300" />
             </div>
           </div>
         </div>
@@ -370,7 +380,7 @@ export default function AdminAbout() {
         <button
           type="submit"
           disabled={saving}
-          className="w-full bg-primary-700/80 hover:bg-primary-800/80 text-white px-8 py-3 rounded backdrop-blur-sm disabled:opacity-50 font-medium transition"
+          className="w-full bg-accent-400/90 hover:bg-accent-400 text-primary-950 px-8 py-3 rounded-xl font-medium transition shadow-lg shadow-primary-900/40 disabled:opacity-50"
         >
           {saving ? 'Sauvegarde...' : 'Sauvegarder les changements'}
         </button>

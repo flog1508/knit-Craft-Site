@@ -1,27 +1,16 @@
 'use client'
 
-import React, { useEffect } from 'react'
+import React from 'react'
 import Link from 'next/link'
-import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
 import { useCart } from '@/hooks'
 import { Button } from '@/components/ui'
 import { Card } from '@/components/ui'
-import { ArrowRight, Trash2, AlertCircle, ShoppingCart } from 'lucide-react'
+import { ArrowRight, Trash2, ShoppingCart } from 'lucide-react'
 import { formatPrice, getImageUrl } from '@/lib/utils'
 import ImageWithFallback from '@/components/ImageWithFallback'
 
 export default function CartPage() {
-  const { data: session } = useSession()
-  const router = useRouter()
   const { items, removeItem, updateQuantity, getTotalPrice } = useCart()
-
-  // Rediriger l'admin vers le dashboard
-  useEffect(() => {
-    if (session?.user && (session.user as any).role?.toUpperCase() === 'ADMIN') {
-      router.push('/admin')
-    }
-  }, [session, router])
 
   const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
     <div className="bg-primary-950">
@@ -33,30 +22,6 @@ export default function CartPage() {
       </section>
     </div>
   )
-
-  // Si l'admin essaie d'accéder directement, montrer un message
-  if (session?.user && (session.user as any).role?.toUpperCase() === 'ADMIN') {
-    return (
-      <Wrapper>
-        <div className="flex flex-col items-center text-center space-y-4">
-          <AlertCircle className="w-12 h-12 text-accent-300 mx-auto mb-2" />
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary-50">
-            Accès non disponible
-          </h1>
-          <p className="text-sm sm:text-base md:text-lg text-accent-100 max-w-xl">
-            L&apos;admin ne peut pas acheter des produits. Accédez au dashboard pour gérer la boutique.
-          </p>
-          <Button
-            size="lg"
-            className="mt-4 shadow-lg shadow-primary-900/40 sm:px-8"
-            onClick={() => router.push('/admin')}
-          >
-            Aller au dashboard
-          </Button>
-        </div>
-      </Wrapper>
-    )
-  }
 
   if (items.length === 0) {
     return (

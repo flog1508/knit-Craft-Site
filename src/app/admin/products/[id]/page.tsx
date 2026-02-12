@@ -49,7 +49,7 @@ export default function AdminProductEditPage() {
     if (isAdmin && !isNew) {
       fetchProduct()
     }
-  }, [isAdmin, productId, isNew])
+  }, [isAdmin, productId, isNew]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchProduct = async () => {
     try {
@@ -396,7 +396,7 @@ export default function AdminProductEditPage() {
             <h2 className="text-xl font-bold text-white mb-4">Prix & Stock</h2>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-white mb-2">Prix (USD)</label>
+                <label className="block text-sm font-medium text-white mb-2">Prix (FC)</label>
                 <Input
                   type="number"
                   name="basePrice"

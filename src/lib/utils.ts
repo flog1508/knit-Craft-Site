@@ -1,8 +1,10 @@
-// Utilitaires pour les prix et conversions
+// Utilitaires pour les prix et conversions (Franc congolais - CDF)
 export const formatPrice = (price: number): string => {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('fr-FR', {
     style: 'currency',
-    currency: 'USD',
+    currency: 'CDF',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   }).format(price)
 }
 

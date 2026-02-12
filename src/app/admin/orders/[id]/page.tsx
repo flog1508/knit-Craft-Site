@@ -33,7 +33,7 @@ export default function AdminOrderDetailPage() {
     if (isAdmin) {
       fetchOrder()
     }
-  }, [isAdmin, orderId])
+  }, [isAdmin, orderId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchOrder = async () => {
     try {

@@ -1,3 +1,5 @@
+import { formatPrice } from './utils'
+
 /**
  * Utilitaire WhatsApp
  * Deux approches:
@@ -33,10 +35,10 @@ export function generateWhatsAppMessage(
   
   for (const product of orderData.products) {
     const lineTotal = (product.price || 0) * (product.quantity || 1)
-    message += `• ${product.name} x${product.quantity} — ${lineTotal.toFixed(2)}€\n`
+    message += `• ${product.name} x${product.quantity} — ${formatPrice(lineTotal)}\n`
   }
   
-  message += `\nTotal : ${orderData.totalPrice}€\n\n`
+  message += `\nTotal : ${formatPrice(orderData.totalPrice)}\n\n`
   message += `Merci de prendre ma commande en compte. Vous me répondrez quand vous aurez vu le message.`
 
   return message

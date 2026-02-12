@@ -2,9 +2,12 @@
 
 import React, { useState } from 'react'
 import Image from 'next/image'
-import { Button, Input, Card } from '@/components/ui'
+import { Button, Input } from '@/components/ui'
 import Link from 'next/link'
-import { ArrowLeft, Sparkles } from 'lucide-react'
+import { ArrowLeft, Sparkles, Mail, FileText, ListChecks, Wallet, Calendar } from 'lucide-react'
+
+const inputClass =
+  'border-primary-800 bg-primary-900/70 text-primary-50 placeholder:text-accent-100/50 focus:ring-accent-300/20 focus:border-accent-300 rounded-lg'
 
 export default function BespokeOrderPage() {
   const [loading, setLoading] = useState(false)
@@ -54,21 +57,24 @@ export default function BespokeOrderPage() {
   if (sent) {
     return (
       <div className="bg-primary-950">
-        <section className="relative overflow-hidden bg-primary-900">
+        <section className="relative overflow-hidden bg-primary-900 min-h-screen flex items-center">
           <div className="absolute inset-0 opacity-100 mix-blend-multiply bg-[url('/images/why-choose.jpg')] bg-cover bg-center bg-fixed" />
-
-          <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
-            <Card className="p-8 bg-primary-900/70 backdrop-blur-md rounded-2xl border border-primary-800 text-primary-50 shadow-lg shadow-primary-900/40">
-              <Sparkles className="w-14 h-14 mx-auto mb-4 text-accent-300" aria-hidden="true" />
-              <h1 className="text-2xl md:text-3xl font-bold mb-4">Demande reçue !</h1>
-              <p className="text-accent-100 mb-6">
-                Merci pour votre demande de commande sur mesure. Nous vous contacterons très prochainement à
-                l&apos;adresse {formData.email}.
+          <div className="relative max-w-lg mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+            <div className="bg-primary-900/70 border border-primary-800 rounded-2xl p-8 sm:p-10 shadow-lg shadow-primary-900/40">
+              <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-accent-400/20 flex items-center justify-center">
+                <Sparkles className="w-8 h-8 text-accent-300" aria-hidden="true" />
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-primary-50 mb-3">Demande reçue !</h1>
+              <p className="text-accent-100 mb-6 leading-relaxed">
+                Merci pour votre confiance. Nous étudions votre projet et vous recontacterons très prochainement à
+                <span className="font-medium text-primary-50"> {formData.email}</span>.
               </p>
               <Link href="/shop">
-                <Button variant="primary">Retour à la boutique</Button>
+                <Button className="shadow-lg shadow-primary-900/40" variant="primary">
+                  Retour à la boutique
+                </Button>
               </Link>
-            </Card>
+            </div>
           </div>
         </section>
       </div>
@@ -121,23 +127,27 @@ export default function BespokeOrderPage() {
             </div>
           </div>
 
-          {/* Formulaire dans un card stylé */}
+          {/* Formulaire personnalisé */}
           <div className="max-w-4xl">
-            <Card className="p-6 sm:p-8 bg-primary-900/70 backdrop-blur-md rounded-2xl border border-primary-800 text-primary-50 shadow-lg shadow-primary-900/40">
-              <div className="flex items-center gap-3 mb-6">
-                <Sparkles className="w-8 h-8 text-accent-300" />
+            <div className="bg-primary-900/70 border border-primary-800 rounded-2xl p-6 sm:p-8 lg:p-10 shadow-lg shadow-primary-900/40">
+              <div className="flex items-start gap-4 mb-8">
+                <div className="w-12 h-12 rounded-xl bg-accent-400/20 flex items-center justify-center shrink-0">
+                  <Sparkles className="w-6 h-6 text-accent-300" />
+                </div>
                 <div>
-                  <h2 className="text-xl md:text-2xl font-bold">Parlez-nous de votre projet</h2>
-                  <p className="text-accent-100 text-sm">
-                    Quelques détails suffisent, nous reviendrons vers vous avec des propositions.
+                  <h2 className="text-xl sm:text-2xl font-bold text-primary-50 mb-1">
+                    Parlez-nous de votre projet
+                  </h2>
+                  <p className="text-accent-100 text-sm sm:text-base">
+                    Décrivez votre idée en quelques mots. Nous vous recontactons sous 48 h avec une proposition.
                   </p>
                 </div>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-primary-50 mb-2">
-                    Votre email *
+                  <label className="flex items-center gap-2 text-sm font-medium text-accent-200 mb-2">
+                    <Mail className="w-4 h-4" /> Votre email *
                   </label>
                   <Input
                     type="email"
@@ -146,12 +156,13 @@ export default function BespokeOrderPage() {
                     onChange={handleChange}
                     required
                     placeholder="vous@email.com"
-                    className="bg-transparent border-primary-700 text-white placeholder:text-white/50"
+                    className={inputClass}
                   />
                 </div>
+
                 <div>
-                  <label className="block text-sm font-medium text-primary-50 mb-2">
-                    Description de votre projet *
+                  <label className="flex items-center gap-2 text-sm font-medium text-accent-200 mb-2">
+                    <FileText className="w-4 h-4" /> Description de votre projet *
                   </label>
                   <textarea
                     name="description"
@@ -159,27 +170,29 @@ export default function BespokeOrderPage() {
                     onChange={handleChange}
                     required
                     rows={4}
-                    placeholder="Décrivez ce que vous souhaitez : type de création, style, couleurs..."
-                    className="w-full px-4 py-2 bg-transparent border border-primary-700 rounded-lg text-white placeholder:text-white/50 focus:outline-none focus:border-accent-400"
+                    placeholder="Type de pièce (pull, gilet, accessoire…), style, couleurs, ambiance souhaitée…"
+                    className={`w-full px-4 py-3 ${inputClass} resize-y min-h-[100px]`}
                   />
                 </div>
+
                 <div>
-                  <label className="block text-sm font-medium text-primary-50 mb-2">
-                    Exigences particulières
+                  <label className="flex items-center gap-2 text-sm font-medium text-accent-200 mb-2">
+                    <ListChecks className="w-4 h-4" /> Exigences particulières
                   </label>
                   <textarea
                     name="requirements"
                     value={formData.requirements}
                     onChange={handleChange}
                     rows={3}
-                    placeholder="Taille, matière, délai souhaité..."
-                    className="w-full px-4 py-2 bg-transparent border border-primary-700 rounded-lg text-white placeholder:text-white/50 focus:outline-none focus:border-accent-400"
+                    placeholder="Taille, matière préférée, délai souhaité…"
+                    className={`w-full px-4 py-3 ${inputClass} resize-y`}
                   />
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-primary-50 mb-2">
-                      Budget indicatif (€)
+                    <label className="flex items-center gap-2 text-sm font-medium text-accent-200 mb-2">
+                      <Wallet className="w-4 h-4" /> Budget indicatif (FC)
                     </label>
                     <Input
                       type="number"
@@ -188,27 +201,36 @@ export default function BespokeOrderPage() {
                       onChange={handleChange}
                       placeholder="Optionnel"
                       min="0"
-                      className="bg-transparent border-primary-700 text-white placeholder:text-white/50"
+                      className={inputClass}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-primary-50 mb-2">
-                      Date souhaitée
+                    <label className="flex items-center gap-2 text-sm font-medium text-accent-200 mb-2">
+                      <Calendar className="w-4 h-4" /> Date souhaitée
                     </label>
                     <Input
                       type="date"
                       name="deadline"
                       value={formData.deadline}
                       onChange={handleChange}
-                      className="bg-transparent border-primary-700 text-white placeholder:text-white/50"
+                      className={inputClass}
                     />
                   </div>
                 </div>
-                <Button type="submit" isLoading={loading} className="w-full" variant="primary">
-                  Envoyer ma demande
-                </Button>
+
+                <div className="pt-2">
+                  <Button
+                    type="submit"
+                    isLoading={loading}
+                    className="w-full shadow-lg shadow-primary-900/40"
+                    size="lg"
+                  >
+                    <Sparkles className="w-5 h-5 mr-2" />
+                    Envoyer ma demande
+                  </Button>
+                </div>
               </form>
-            </Card>
+            </div>
           </div>
         </div>
       </section>

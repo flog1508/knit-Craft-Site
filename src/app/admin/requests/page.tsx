@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { Sparkles, MessageCircle } from 'lucide-react'
+import { formatPrice } from '@/lib/utils'
 
 interface CustomRequest {
   id: string
@@ -66,99 +67,103 @@ export default function AdminRequests() {
     }
   }
 
-  if (loading) return <div className="text-center py-8">Chargement des demandes...</div>
+  if (loading) return <div className="text-center py-8 text-accent-100">Chargement des demandes...</div>
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-6 text-white flex items-center gap-3">
-        <Sparkles className="w-7 h-7 text-accent-300" aria-hidden="true" />
-        <span>Demandes Personnalisées (Sur Mesure)</span>
-      </h1>
+    <div className="py-10 sm:py-12 space-y-10">
+      <div className="flex items-center gap-3">
+        <div className="w-12 h-12 rounded-xl bg-accent-400/20 flex items-center justify-center shrink-0">
+          <Sparkles className="w-6 h-6 text-accent-300" aria-hidden="true" />
+        </div>
+        <div>
+          <p className="uppercase tracking-[0.25em] text-accent-200 text-xs sm:text-sm mb-1">Sur mesure</p>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary-50">
+            Demandes personnalisées
+          </h1>
+          <p className="text-accent-100 text-sm mt-1">
+            Gérez les demandes de création sur mesure envoyées par vos clients.
+          </p>
+        </div>
+      </div>
 
       {/* Filtres */}
-      <div className="bg-white/20 backdrop-blur-md rounded-lg shadow p-6 mb-6">
-        <p className="font-bold mb-3 text-white">Filtrer par statut:</p>
+      <div className="bg-primary-900/70 border border-primary-800 rounded-2xl p-6 shadow-lg shadow-primary-900/40">
+        <p className="font-bold mb-3 text-primary-50">Filtrer par statut</p>
         <div className="flex flex-wrap gap-2">
           {['PENDING', 'ACCEPTED', 'IN_PROGRESS', 'COMPLETED', 'REJECTED'].map(status => (
             <button
               key={status}
               onClick={() => setFilter(status)}
-              className={`px-4 py-2 rounded font-bold transition ${
+              className={`px-4 py-2 rounded-lg font-bold transition ${
                 filter === status
-                  ? 'bg-purple-600 text-white'
-                  : 'bg-white/20 text-white hover:bg-white/30'
+                  ? 'bg-accent-400/90 text-primary-950'
+                  : 'bg-primary-800/50 text-accent-100 hover:bg-primary-800 border border-primary-700'
               }`}
             >
               {getStatusLabel(status)}
             </button>
           ))}
         </div>
-        <p className="text-white/80 mt-4">
-          {filteredRequests.length} demande(s)
+        <p className="text-accent-100 mt-4">
+          <span className="font-semibold text-primary-50">{filteredRequests.length}</span> demande(s)
         </p>
       </div>
 
       {/* Liste des demandes */}
       {filteredRequests.length === 0 ? (
-        <div className="bg-white/20 backdrop-blur-md rounded-lg shadow p-8 text-center">
-          <p className="text-white/80">Aucune demande pour ce filtre</p>
+        <div className="bg-primary-900/70 border border-primary-800 rounded-2xl shadow-lg shadow-primary-900/40 p-8 text-center">
+          <p className="text-accent-100">Aucune demande pour ce filtre.</p>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-6">
           {filteredRequests.map(request => (
-            <div key={request.id} className="bg-white/20 backdrop-blur-md rounded-lg shadow p-6">
-              {/* Entête */}
+            <div key={request.id} className="bg-primary-900/70 border border-primary-800 rounded-2xl p-6 shadow-lg shadow-primary-900/40">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                {/* Email et date */}
                 <div>
-                  <p className="text-white/70 text-sm">Email Client</p>
-                  <p className="text-blue-300 underline cursor-pointer">
-                    <a href={`mailto:${request.email}`}>{request.email}</a>
-                  </p>
-                  <p className="text-white/70 text-sm mt-2">
-                    {new Date(request.createdAt).toLocaleDateString('fr-FR')}
+                  <p className="text-accent-200 text-sm font-medium mb-1">Email client</p>
+                  <a href={`mailto:${request.email}`} className="text-accent-300 hover:text-accent-200 underline break-all">
+                    {request.email}
+                  </a>
+                  <p className="text-accent-100 text-sm mt-2">
+                    {new Date(request.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
                   </p>
                 </div>
-
-                {/* Budget et deadline */}
                 <div>
-                  <p className="text-white/70 text-sm">Budget</p>
-                  <p className="font-bold text-green-300">
-                    {request.budget ? `${request.budget}€` : 'Non spécifié'}
+                  <p className="text-accent-200 text-sm font-medium mb-1">Budget</p>
+                  <p className="font-bold text-primary-50">
+                    {request.budget ? formatPrice(request.budget) : 'Non spécifié'}
                   </p>
-                  <p className="text-white/70 text-sm mt-2">
-                    Deadline: {request.deadline 
-                      ? new Date(request.deadline).toLocaleDateString('fr-FR')
-                      : 'Aucune'
-                    }
+                  <p className="text-accent-100 text-sm mt-2">
+                    Souhaité pour le {request.deadline ? new Date(request.deadline).toLocaleDateString('fr-FR') : '—'}
                   </p>
                 </div>
-
-                {/* Status badge */}
                 <div className="flex items-center justify-end">
-                  <span className="text-2xl">{getStatusLabel(request.status)}</span>
+                  <span className="inline-block px-3 py-1.5 rounded-lg font-semibold text-sm bg-primary-800/80 text-primary-50 border border-primary-700">
+                    {getStatusLabel(request.status)}
+                  </span>
                 </div>
               </div>
 
-              {/* Description */}
-              <div className="bg-white/10 p-4 rounded mb-4">
-                <p className="text-white/70 text-sm mb-1">Description:</p>
-                <p className="text-white">{request.description}</p>
-                
-                <p className="text-white/70 text-sm mt-3 mb-1">Exigences:</p>
-                <p className="text-white">{request.requirements}</p>
+              <div className="bg-primary-800/50 p-4 rounded-xl border border-primary-800 mb-4 space-y-3">
+                <div>
+                  <p className="text-accent-200 text-sm font-medium mb-1">Description</p>
+                  <p className="text-primary-50 whitespace-pre-wrap">{request.description}</p>
+                </div>
+                <div>
+                  <p className="text-accent-200 text-sm font-medium mb-1">Exigences</p>
+                  <p className="text-primary-50 whitespace-pre-wrap">{request.requirements || '—'}</p>
+                </div>
               </div>
 
-              {/* Actions */}
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex flex-wrap gap-2">
                 {['PENDING', 'ACCEPTED', 'IN_PROGRESS', 'COMPLETED', 'REJECTED'].map(status => (
                   <button
                     key={status}
                     onClick={() => updateRequestStatus(request.id, status)}
-                    className={`px-4 py-2 rounded font-bold transition ${
+                    className={`px-4 py-2 rounded-lg font-bold transition text-sm ${
                       request.status === status
-                        ? 'bg-purple-600 text-white'
-                        : 'bg-white/20 text-white hover:bg-white/30'
+                        ? 'bg-accent-400/90 text-primary-950'
+                        : 'bg-primary-800/50 text-accent-100 hover:bg-primary-800 border border-primary-700'
                     }`}
                   >
                     {getStatusLabel(status)}
@@ -166,16 +171,15 @@ export default function AdminRequests() {
                 ))}
               </div>
 
-              {/* Bouton contact rapide */}
-              <div className="mt-4 pt-4 border-t border-white/20">
+              <div className="mt-4 pt-4 border-t border-primary-800">
                 <a
-                  href={`https://wa.me/${(process.env.NEXT_PUBLIC_CONTACT_PHONE || process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '243987352719').replace(/\D/g, '')}?text=Bonjour, concernant votre demande personnalisée de ${request.email}...`}
+                  href={`https://wa.me/${(process.env.NEXT_PUBLIC_CONTACT_PHONE || process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '243987352719').replace(/\D/g, '')}?text=Bonjour, concernant votre demande personnalisée (${request.email})...`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-green-600 text-white px-4 py-2 rounded font-bold hover:bg-green-700 inline-flex items-center gap-2"
+                  className="bg-green-600 text-primary-50 px-4 py-2.5 rounded-lg font-bold hover:bg-green-500 inline-flex items-center gap-2 transition"
                 >
                   <MessageCircle className="w-5 h-5" aria-hidden="true" />
-                  <span>Contacter via WhatsApp</span>
+                  Contacter via WhatsApp
                 </a>
               </div>
             </div>
